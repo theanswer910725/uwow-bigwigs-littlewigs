@@ -1,0 +1,30 @@
+## Interface: 70300
+
+## Title: |cffff0000Uwow:|r |cffff00ffLittleWigs|r |cffff0000[|r|cff00ff00Modded by|r |cFFA330C9Энелрила|r|cffff0000]|r
+## Notes: Boss warnings for 5-man dungeons & scenarios.
+## Notes-deDE: Boss warnings for 5-man dungeons & scenarios.
+## Notes-esES: Boss warnings for 5-man dungeons & scenarios.
+## Notes-esMX: Boss warnings for 5-man dungeons & scenarios.
+## Notes-frFR: Boss warnings for 5-man dungeons & scenarios.
+## Notes-itIT: Avvisi per i boss delle spedizioni & scenari
+## Notes-koKR: 5인 던전 & 시나리오의 우두머리 경보입니다.
+## Notes-ptBR: Boss warnings for 5-man dungeons & scenarios.
+## Notes-ruRU: Boss warnings for 5-man dungeons & scenarios.
+## Notes-zhCN: 5人地下城和场景战役首领警报。
+## Notes-zhTW: 5人地城和情境地圖首領警報。
+## Author: Funkydude
+## X-Category: Party, Raid
+## X-Credits: Ulic
+## X-License: All Rights Reserved: You are free to fork and modify on GitHub, please ask us about anything else.
+## X-Curse-Project-ID: 4383
+## X-WoWI-ID: 9577
+
+## X-BigWigs-ExtraMenu: 1716, -1007, -1018
+## X-BigWigs-NoMenu: 1702, 1684, 1698, 1673, 1710, -1018
+## X-BigWigs-LoadOn-InstanceId: 0, 1, 33, 36, 269, 489, 530, 540, 542, 543, 545, 546, 547, 552, 553, 554, 555, 556, 557, 558, 560, 568, 571, 574, 575, 576, 578, 585, 595, 599, 600, 601, 602, 604, 608, 619, 632, 643, 644, 645, 646, 650, 657, 658, 668, 670, 725, 730, 732, 755, 859, 860, 870, 938, 939, 959, 960, 961, 962, 994, 1001, 1004, 1011, 1064, 1112, 1116, 1175, 1176, 1182, 1191, 1195, 1208, 1209, 1220, 1279, 1358, 1456, 1458, 1464, 1466, 1477, 1492, 1493, 1501, 1516, 1520, 1530, 1544, 1571, 1594, 1648, 1651, 1669, 1676, 1677, 1712, 1753, 1754, 1762, 1763, 1771, 1779, 1822, 1841, 1861, 1862, 1864, 1877, 2097, 2212, 2213, 2284, 2285, 2286, 2287, 2289, 2290, 2291, 2293, -1018
+## X-BigWigs-LoadOn-WorldBoss: -1015, 108829, -1015, 109331, -1017, 107023, -1015, 102075, -1024, 110378, -1024, 99929, -1018, 108678, -1018, 108879, -1017, 106981, -1017, 106982, -1017, 106984, -1033, 110321, -1021, 121124, -1021, 117239, -1021, 117303, -1021, 117470
+## Dependencies: BigWigs
+## LoadOnDemand: 1
+## Version: v7.3.31
+
+modules.xml

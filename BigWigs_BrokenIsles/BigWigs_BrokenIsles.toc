@@ -1,0 +1,33 @@
+## Interface: 70300
+
+## Title: BigWigs [|cffeda55fBroken Isles|r]
+## Title-deDE: BigWigs [|cffeda55fVerheerte Inseln|r]
+## Title-esES: BigWigs [|cffeda55fIslas Abruptas|r]
+## Title-esMX: BigWigs [|cffeda55fIslas Abruptas|r]
+## Title-frFR: BigWigs [|cffeda55fÎles Brisées|r]
+## Title-ruRU: BigWigs [|cffeda55fРасколотые острова|r]
+## Title-zhCN: BigWigs [|cffeda55f破碎群岛|r]
+## Title-zhTW: BigWigs [|cffeda55f破碎群島|r]
+## Title-itIT: BigWigs [|cffeda55fBroken Isles|r]
+## Title-ptBR: BigWigs [|cffeda55fIlhas Partidas|r]
+## Title-koKR: BigWigs [|cffeda55f부서진 섬|r]
+## Notes: BigWigs Broken Isles Modules
+## Notes-deDE: BigWigs-Module für die Verheerten Inseln
+## Notes-esES: BigWigs Módulos para las Islas Abruptas
+## Notes-esMX: BigWigs Módulos para las Islas Abruptas
+## Notes-frFR: BigWigs Modules BigWigs concernant les Îles Brisées
+## Notes-ruRU: BigWigs Модуль для Расколотых островов
+## Notes-zhCN: BigWigs 破碎群岛模块。
+## Notes-zhTW: BigWigs 破碎群島模組。
+## Notes-itIT: BigWigs Broken Isles Modules
+## Notes-ptBR: Módulo das Ilhas Partidas do BigWigs
+## Notes-koKR: BigWigs 부서진 섬 모듈
+
+## LoadOnDemand: 1
+## Dependencies: BigWigs
+
+## X-Category: Raid
+## X-BigWigs-ExtraMenu: -1007
+## X-BigWigs-LoadOn-WorldBoss: -1015, 108829, -1015, 109331, -1017, 107023, -1015, 102075, -1024, 110378, -1024, 99929, -1018, 108678, -1018, 108879, -1017, 106981, -1017, 106982, -1017, 106984, -1033, 110321, -1021, 121124, -1021, 117239, -1021, 117303, -1021, 117470
+
+modules.xml
