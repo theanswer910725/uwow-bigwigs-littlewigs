@@ -28,3 +28,19 @@ if L then
 	L.gromkar_captain = "格罗姆卡上尉"
 	L.grimrail_scout = "恐轨斥候"
 end
+
+L = BigWigs:NewBossLocale("=> AutoMarks <=              ", "zhCN")
+if L then
+	L.custom_on_Allowmarks = "标记选定小怪"
+	L.custom_on_Allowmarks_desc = "用 {rt1}{rt2}{rt3}{rt4}{rt5}{rt6}{rt7} 标记小怪，你需要是助理或领袖"
+	L.custom_off_RequireLead = "仅由我（领袖）操作"
+	L.custom_off_CombatMarking  = "仅标记战斗中的小怪"
+	
+	L.Choose = "请选择需要标记的小怪"
+	
+	L.custom_off_Mob1 = "恐轨技师"
+	L.custom_off_Mob2 = "格罗姆卡燃烬先知"
+	L.custom_off_Mob3 = "格罗姆卡爆破手"
+	L.custom_off_Mob4 = "格罗姆卡枪手"
+	L.custom_off_Mob5 = "格罗姆卡先知"
+end
