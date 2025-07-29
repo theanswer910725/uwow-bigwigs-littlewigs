@@ -9,6 +9,7 @@ if L then
 	L.warmup_text = "科达娜·邪歌激活"
 	L.warmup_trigger = "我拿到想要的东西了。但我要留下来了结你们……永除后患！"
 	L.warmup_trigger_2 = "你们掉进了我的陷阱。让我看看你们在黑暗中的本事吧。"
+	L.warmup_trigger_3 = "How utterly predictable! I knew that you would come."
 end
 
 L = BigWigs:NewBossLocale("Glazer", "zhCN")
@@ -19,6 +20,7 @@ end
 L = BigWigs:NewBossLocale("Tirathon Saltheril", "zhCN")
 if L then
 	L.warmup_trigger = "我为人民而战，为那些被放逐和唾弃的人而战。"
+	L.warmup_trigger2 = "I gave of my flesh, my soul; my people shun me as a freak."
 end
 
 L = BigWigs:NewBossLocale("Vault of the Wardens Trash", "zhCN")
