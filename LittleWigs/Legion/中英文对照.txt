@@ -8,5 +8,6 @@ EyeOfAzshara 艾萨拉之眼
 HallsOfValor 英灵殿
 Karazhan 卡拉赞
 MawOfSouls 噬渊之喉
+NeltharionsLair 奈萨里奥的巢穴 
 TheArcway 魔法回廊
 SeatOfTheTriumvirate 执政团之座
