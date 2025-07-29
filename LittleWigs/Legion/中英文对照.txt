@@ -10,4 +10,5 @@ Karazhan 卡拉赞
 MawOfSouls 噬渊之喉
 NeltharionsLair 奈萨里奥的巢穴 
 TheArcway 魔法回廊
+VaultOfTheWardens 守望者地窟
 SeatOfTheTriumvirate 执政团之座
