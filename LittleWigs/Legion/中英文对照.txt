@@ -2,3 +2,5 @@ ArtifactScenarios 神器专属场景战役
 AssaultOnVioletHold 突袭紫罗兰监狱
 BlackRookHold 黑鸦堡垒
 CathedralOfEternalNight 永夜大教堂
+CourtOfStars 群星庭院
+DarkheartThicket 黑心林地

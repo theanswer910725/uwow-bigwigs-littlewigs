@@ -7,6 +7,7 @@ if L then
 	L.Hound = "军团猎犬"
 	L.Mistress = "暗影女妖"
 	L.Gerenth = "邪恶的格伦斯"
+	L.ManaSaber = "魔刃豹"
 	L.Jazshariu = "加兹沙尤"
 	L.Imacutya = "依玛库塔"
 	L.Baalgar = "警惕的巴尔戈"
@@ -37,6 +38,8 @@ if L then
 	L.ArcanePowerConduit = "奥术能量导管"
 	L.FlaskoftheSolemnNight = "庄严静夜合剂"
 
+	L.custom_on_announcement = "Анонс всех бафов (используйте макрос после лодки)"
+	L.custom_on_announcement_desc = "/ц Настой /ц Проводник /ц Выброшенный /ц Раненый /ц Рыночные /ц Статуя /ц Сфера /ц Инфернальный /ц Магический /ц Закуски /ц Отвар /ц Теневой /ц Промок"
 
 	L.announce_buff_items = "通报增益物品"
 	L.announce_buff_items_desc = "通报此地下城所有可用的增益物品，并通报谁可以使用。"
@@ -154,4 +157,23 @@ end
 L = BigWigs:NewBossLocale("Advisor Melandrus", "zhCN")
 if L then
 	L.warmup_trigger = "显然你又失败了，麦兰杜斯。我给你一个机会。干掉这些外来者，我得回暗夜要塞了。"
+	-- TODO 顾问麦兰杜斯 
+	L.warmup_trigger2 = "大魔导师，您这么快就要离开了吗？"
+end
+
+L = BigWigs:NewBossLocale("=> AutoMarks <=          ", "zhCN")
+if L then
+	L.custom_on_Allowmarks = "标记选定小怪"
+	L.custom_on_Allowmarks_desc = "用 {rt1}{rt2}{rt3}{rt4}{rt5}{rt6}{rt7} 标记小怪，你需要是助理或领袖"
+	L.custom_off_RequireLead = "仅由我（领袖）操作"
+	L.custom_off_CombatMarking  = "仅标记战斗中的小怪"
+	
+	L.Choose = "请选择需要标记的小怪"
+	
+	L.custom_off_Mob1 = "警惕的暮色卫队卫兵"
+	L.custom_off_Mob2 = "暮色卫队哨兵"
+	L.custom_off_Mob3 = "魔刃豹"
+	L.custom_off_Mob4 = "构造体卫兵"
+	L.custom_off_Mob5 = "邪缚执行者"
+	L.custom_off_Mob6 = "警觉的审判者"
 end
