@@ -32,6 +32,14 @@ if L then
 	L.IntangiblePresence = "无形"
 end
 
+-- TODO : Verify locales for the Opera Hall bosses
+-- 首领 ​​巴内斯​（Barnes）​​ 在歌剧院《西部荒野故事》开场时说出
+L = BigWigs:NewBossLocale("Opera Hall: Westfall Story", "zhCN") 
+if L then
+	L.warmup_text = "怎么，想找麻烦？"
+	L.warmup_trigger = "怎么，想找麻烦？"
+end
+
 L = BigWigs:NewBossLocale("=> AutoMarks <=   ", "zhCN")
 if L then
 	L.custom_on_Allowmarks = "标记选定小怪"
