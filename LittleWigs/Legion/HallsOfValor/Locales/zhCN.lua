@@ -56,6 +56,12 @@ if L then
 
 end
 
+-- TODO : Verify locales for the Opera Hall bosses
+L = BigWigs:NewBossLocale("Opera Hall: Westfall Story", "zhCN") 
+if L then
+	L.warmup_text = "So ya wanna rumble, do ya?"
+	L.warmup_trigger = "So ya wanna rumble, do ya?"
+end
 
 L = BigWigs:NewBossLocale("=> AutoMarks <=         ", "zhCN")
 if L then
