@@ -1,5 +1,5 @@
 # 适用于UWOW的bigwigs和littlewigs，源文件来自[owloo1337](https://drive.google.com/drive/folders/1FFIIEvq1PhcMHhEv4VpoX1WaWsUAq4oO)
-# 由UWOW Legion Plus ×1 彩虹交友俱乐部 代码哥、水银灯完成本地化工作。
+# 由UWOW Legion Plus ×1 彩虹交友俱乐部 代码哥、水银灯完成zhCN本地化工作。
 # 公会QQ群：646571191
 
 ![Static Badge](https://img.shields.io/badge/license-Apache%20License%202.0-blue?style=flat)
