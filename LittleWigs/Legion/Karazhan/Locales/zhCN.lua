@@ -20,6 +20,8 @@ if L then
 	L.maiden = "贞善女士"
 	L.philanthropist = "幽灵慈善家"
 	L.guardsman = "幻影卫兵"
+	-- 在 ​馆长房间战后随机播放
+	L.warmup_trigger = "我在这座塔里留下了太多属于自己的碎片……"
 end
 
 L = BigWigs:NewBossLocale("Nightbane", "zhCN")
@@ -30,6 +32,14 @@ end
 L = BigWigs:NewBossLocale("Attumen the Huntsman", "zhCN")
 if L then
 	L.IntangiblePresence = "无形"
+end
+
+-- TODO : Verify locales for the Opera Hall bosses
+-- 首领 ​​巴内斯​（Barnes）​​ 在歌剧院《西部荒野故事》开场时说出
+L = BigWigs:NewBossLocale("Opera Hall: Westfall Story", "zhCN") 
+if L then
+	L.warmup_text = "怎么，想找麻烦？"
+	L.warmup_trigger = "怎么，想找麻烦？"
 end
 
 L = BigWigs:NewBossLocale("=> AutoMarks <=   ", "zhCN")
