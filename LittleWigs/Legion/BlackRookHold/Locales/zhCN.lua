@@ -8,12 +8,11 @@ if L then
 	L.scout = "复活的斥候"
 	L.councilor = "幽灵顾问"
 	L.dominator = "魔怨支配者"
-	-- TODO 需要在黑鸦堡垒进行台词验证
 	L.warmup_text = "最后一批滚石！"  -- "The last boulders !"
-	L.warmup_trigger = "哈！用这些大石头砸扁他们！"  -- "Ha! We'll get 'em wit' these big rocks!"
-	L.warmup_trigger2 = "啊！他们来了！快跑！"  -- "Ahh! They coming! RUN!"
-	L.warmup_trigger3 = "啊啊啊！我们错了！我们保证！"  -- "AHHH! WE SORRY! WE PROMISE!"
-	-- TODO 验证 打完老1
+	L.warmup_trigger = "哈！我们会用这些大石头解决他们的！！"  -- "Ha! We'll get 'em wit' these big rocks!"
+	L.warmup_trigger2 = "啊！他们来了！快跑！！"  -- "Ahh! They coming! RUN!"
+	L.warmup_trigger3 = "啊！我们很抱歉！我们保证！"  -- "AHHH! WE SORRY! WE PROMISE!"
+ 	-- TODO 需要在黑鸦堡垒进行台词验证
 	L.warmup_trigger4 = "黑暗……它消失了。"  -- "The darkness... it is gone."
 end
 
@@ -27,8 +26,7 @@ end
 
 L = BigWigs:NewBossLocale("Kurtalos Ravencrest", "zhCN")
 if L then
-	-- TODO 库塔洛斯·拉文凯斯 台词有待验证
-	L.phase_2_trigger = "够了！我厌倦了这一切。"
+	L.phase_2_trigger = "够了！我受够了。" 
 end
 
 L = BigWigs:NewBossLocale("=> AutoMarks <=     ", "zhCN")
