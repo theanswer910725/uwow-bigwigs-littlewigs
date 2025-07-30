@@ -20,6 +20,8 @@ if L then
 	L.maiden = "贞善女士"
 	L.philanthropist = "幽灵慈善家"
 	L.guardsman = "幻影卫兵"
+	-- 在 ​馆长房间战后随机播放
+	L.warmup_trigger = "我在这座塔里留下了太多属于自己的碎片……"
 end
 
 L = BigWigs:NewBossLocale("Nightbane", "zhCN")
