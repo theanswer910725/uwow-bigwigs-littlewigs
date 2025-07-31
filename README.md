@@ -5,7 +5,7 @@
 ![Static Badge](https://img.shields.io/badge/license-Apache%20License%202.0-blue?style=flat)
 ![Static Badge](https://img.shields.io/badge/build-passing-green?style=flat)
 ![Static Badge](https://img.shields.io/badge/language-lua-orange?style=flat)
-![Static Badge](https://img.shields.io/badge/version-v1.0.0--20250730-yellow?style=flat)
+![Static Badge](https://img.shields.io/badge/version-v1.0.2--20250801-yellow?style=flat)
 
   
 ## 以下是副本中英文对照，供后续插件开发使用：
