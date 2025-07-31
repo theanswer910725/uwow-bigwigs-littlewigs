@@ -1,7 +1,7 @@
 local L = BigWigs:NewBossLocale("Eye of Azshara Trash", "zhCN")
 if not L then return end
 if L then
-	L.gritslime = "砂泥蜗牛
+	L.gritslime = "砂泥蜗牛"
 	L.wrangler = "积怨牧鱼者"
 	L.stormweaver = "积怨织雷者"
 	L.crusher = "积怨碾压者"
