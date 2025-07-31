@@ -5,7 +5,7 @@ if L then
 	L.hulk = "邪裂巨人"
 	L.gnasher = "岩背啮咬者"
 	L.trapper = "缚石捕兽者"
-	L.emberhusk = "烬壳统御者“
+	L.emberhusk = "烬壳统御者"
 	L.vicious_manafang = "枯碎蜘蛛"
 end
 
