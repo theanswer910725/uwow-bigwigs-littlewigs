@@ -308,9 +308,9 @@ function mod:Ressurect(args)
 end
 
 local function msg(...)
-    print("|cffff0000Uwow:|r |cffff00ffLittleWigs|r |cffff0000[|r|cff00ff00Modded by|r |cFFA330C9Энелрила|r|cffff0000]|r",...)
+    print("|cffff0000Uwow:|r |cffff00ffLittleWigs|r |cffff0000[|r|cff00ff00Modded by|r |cFFA330C9Энелрила|r |cff00ff00汉化修复：|r|cffff0000@代码哥 @水银灯|r |cffff0000]|r ",...)
 end
-msg("|cFF00D1FF - Loaded version 38 |r")
+msg("|cFF00D1FF - Loaded version 38-1.0.2-20250824|r")
 local debug_enabled = false
 local function debug(...)
   if debug_enabled then
