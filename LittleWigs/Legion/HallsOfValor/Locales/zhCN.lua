@@ -33,7 +33,9 @@ if L then
 	L.custom_on_autotalk_desc = "立即选择地下城内多个对话选项。"
 
 	L.fourkings = "四王"
+	L.runecarver = "瓦拉加尔刻符者"
 	L.olmyr = "启迪者奥米尔"
+	L.solsten = "索斯坦"
 	L.purifier = "瓦拉加尔净化者"
 	L.thundercaller = "瓦拉加尔唤雷者"
 	L.mystic = "瓦拉加尔秘法师"
@@ -42,4 +44,30 @@ if L then
 	L.marksman = "瓦拉加尔神射手"
 	L.trapper = "瓦拉加尔捕兽者"
 	L.sentinel = "雷铸斥候"
+	L.Kings = "准备与 %s 对话"
+	L.Check = "!kings"
+	L.Start = "!pull"
+	L.Reply = "可以激活（聊天命令由队长开启对话）"
+	L.Function = "此功能已关闭"
+	L.custom_off_multiple_kings = "禁用与小Boss的自动对话，通过队长在聊天中激活"
+	L.custom_off_multiple_kings_desc = "在聊天中输入 |cffff0000!kings|r 检查谁启用了此功能。打开小Boss的对话框，等待队长发送 |cffff0000!pull|r 命令，即可同时激活所有小Boss，|cffff0000请确保关闭其他插件（如 AngryKeystones）的自动跳过对话|r|cff00ff00    => 聊天命令仅适用于小队聊天频道，由队长使用 <=|r"
+	L.warmup_trigger1 = "赫娅……你来执掌风暴的怒火！"
+	L.warmup_trigger2 = "愿圣光永远照耀你，赫娅！"
+
+end
+
+L = BigWigs:NewBossLocale("=> AutoMarks <=         ", "zhCN")
+if L then
+	L.custom_on_Allowmarks = "标记选定小怪"
+	L.custom_on_Allowmarks_desc = "用 {rt1}{rt2}{rt3}{rt4}{rt5}{rt6}{rt7} 标记小怪，你需要是助理或领袖"
+	L.custom_off_RequireLead = "仅由我（领袖）操作"
+	L.custom_off_CombatMarking  = "仅标记战斗中的小怪"
+	
+	L.Choose = "请选择需要标记的小怪"
+	
+	L.custom_off_Mob1 = "瓦拉加尔秘法师"
+	L.custom_off_Mob2 = "瓦拉加尔净化者"
+	L.custom_off_Mob3 = "瓦拉加尔唤雷者"
+	L.custom_off_Mob4 = "瓦拉加尔神射手"
+	L.custom_off_Mob5 = "四王"
 end
