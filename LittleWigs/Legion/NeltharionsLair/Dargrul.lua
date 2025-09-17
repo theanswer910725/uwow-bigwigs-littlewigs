@@ -12,6 +12,15 @@ local MagmaWaveCount = 0
 local CrystalSpikesCount = 0
 local LandslideCount = 0
 local MoltenCrashCount = 0
+local MagmaSculptorCount = 0
+
+local timers = {
+	[200551] = {21.80, 21.84, 33.30, 21.85, 21.78, 26.62, 21.80, 32.75, 29.07, 21.81, 26.82, 22.86, 38.68, 21.82, 21.83, 26.55, 21.81, 32.67, 26.62, 21.84, 21.83, 26.66, 21.82, 23.84, 21.82, 35.78}, -- Crystal Spikes
+	[200637] = {74.49, 71.51, 77.56, 71.51, 75.12, 71.50, 71.52, 87.89, 71.50}, -- Magma Sculptor
+	[200700] = {17.00, 18.60, 23.64, 17.03, 17.02, 19.20, 16.98, 17.00, 17.01, 30.15, 17.03, 17.02, 16.99, 17.02, 17.02, 16.98, 27.50, 17.04, 17.02, 19.20, 16.99, 17.01, 17.03, 30.05, 17.07, 16.91, 18.37, 17.95, 17.02, 17.02, 26.24, 17.02, 16.99, 17.01, 18.67}, -- Landslide
+	[200732] = {17.03, 18.57, 23.61, 17.05, 17.04, 28.72, 7.48, 16.94, 17.07, 30.13, 17.02, 17.05, 26.24, 7.77, 16.99, 16.98, 27.52, 17.04, 17.02, 28.65, 7.52, 17.01, 17.05, 30.05, 17.00, 16.97, 27.31, 9.02, 16.99, 17.06, 26.20, 17.03, 17.06, 16.97}, -- Molten Crash
+	[200404] = {66.05, 65.96, 65.98, 66.00, 65.99, 66.01, 66.84, 66.13, 67.24}, -- Magma Wave
+}
 --------------------------------------------------------------------------------
 -- Initialization
 --
@@ -23,8 +32,13 @@ function mod:GetOptions()
 		{200154, "SAY", "ICON"}, -- Burning Hatred
 		200404, -- Magma Wave
 		200551, -- Crystal Spikes
+		216407, -- Lava Geyser
 		200637, -- Magma Sculptor
 		200672, -- Crystal Cracked
+	}, {
+		[200154] = -12596, -- Molten Charskin
+	}, {
+		[200637] = CL.big_add, -- Magma Sculptor (Big Add)
 	}
 end
 
@@ -35,24 +49,25 @@ function mod:OnBossEnable()
 	self:Log("SPELL_AURA_REMOVED", "BurningHatredRemoved", 200154)
 	self:Log("SPELL_CAST_START", "CrystalSpikes", 200551)
 	self:Log("SPELL_CAST_START", "MagmaWave", 200404)
+	self:Log("SPELL_CAST_START", "MagmaWavePreCast", 200418)
 	self:Log("SPELL_CAST_START", "MagmaSculptor", 200637)
+	self:Log("SPELL_AURA_APPLIED", "LavaGeyserDamage", 216407)
+	self:Log("SPELL_PERIODIC_DAMAGE", "LavaGeyserDamage", 216407)
 
-	self:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", nil, "boss1")
 	self:RegisterEvent("CHAT_MSG_RAID_BOSS_EMOTE")
-	self:RegisterUnitEvent("UNIT_POWER", nil, "boss1")
 end
 
 function mod:OnEngage()
-	self:CDBar(200551, 5.90) -- Crystal Spikes
-	self:CDBar(200637, 9.47) -- Magma Sculptor
-	self:CDBar(200700, 15.56) -- Landslide
-	self:CDBar(200732, 18.73) -- Molten Crash
-	self:CDBar(200404, self:Normal() and 60 or 66) -- Magma Wave
-	self:CDBar(200404, 66.70) -- Magma Wave
+	self:CDBar(200551, 5.86) -- Crystal Spikes
+	self:CDBar(200637, 10.72, CL.big_add) -- Magma Sculptor
+	self:CDBar(200700, 16.36) -- Landslide
+	self:CDBar(200732, 19.58) -- Molten Crash
+	self:CDBar(200404, 68.01) -- Magma Wave
 	MagmaWaveCount = 1
 	CrystalSpikesCount = 1
 	LandslideCount = 1
 	MoltenCrashCount = 1
+	MagmaSculptorCount = 1
 end
 
 --------------------------------------------------------------------------------
@@ -61,65 +76,36 @@ end
 
 function mod:CHAT_MSG_RAID_BOSS_EMOTE(_, msg)
 	if msg:find("200672", nil, true) then
-		self:Message(200672, "Positive", "Long", msg)
-	end
-end
-
-do
-	local prev = 0
-	function mod:UNIT_POWER(unit, pType, args)
-		if pType == "MANA" then
-			local t = GetTime()
-			if t-prev > 0.5 then
-				prev = t
-				local power = UnitPower(unit, 0)+35
-				if power == 95 then
-					self:Message(200404, "Personal", "Bike Horn", CL.percent:format(power, self:SpellName(200404)))
-				end
-			end
-		end
+		self:Message(200672, "Positive", "Info", msg)
 	end
 end
 
 function mod:MagmaSculptor(args)
-	self:Message(args.spellId, "Attention", "Info", CL.spawned:format(self:SpellName(200637)))
+	self:Message(args.spellId, "yellow", "Alert", CL.incoming:format(CL.big_add))
+	self:Bar(args.spellId, timers[args.spellId][MagmaSculptorCount], CL.big_add)
+	MagmaSculptorCount = MagmaSculptorCount + 1
 end
 
 function mod:MoltenCrash(args)
-	if MoltenCrashCount == 1 and MagmaWaveCount == 3 then
-		self:CDBar(args.spellId, 11.4)
-	elseif MoltenCrashCount == 1 and MagmaWaveCount == 5 then
-		self:CDBar(args.spellId, 11.94)
-	elseif MoltenCrashCount == 1 and MagmaWaveCount == 7 then
-		self:CDBar(args.spellId, 10.75)
-	elseif MoltenCrashCount == 1 and MagmaWaveCount == 10 then
-		self:CDBar(args.spellId, 10.21)
-	elseif MoltenCrashCount == 1 or MoltenCrashCount == 2 then
-		self:CDBar(args.spellId, 17)
-	elseif MoltenCrashCount == 3 and (MagmaWaveCount == 3 or MagmaWaveCount == 5 or MagmaWaveCount == 7) then
-		self:CDBar(args.spellId, 17)
-	end
-	self:Message(args.spellId, "Important", "Warning")
+	self:Message(args.spellId, "Personal", "Alert")
+	self:Bar(args.spellId, timers[args.spellId][MoltenCrashCount])
 	MoltenCrashCount = MoltenCrashCount + 1
 end
 
 function mod:Landslide(args)
-	if LandslideCount == 3 and MagmaWaveCount == 2 then
-		self:CDBar(args.spellId, 18.3)
-	elseif LandslideCount == 1 or LandslideCount == 2 then
-		self:CDBar(args.spellId, 17)
-	elseif LandslideCount == 3 and (MagmaWaveCount == 2 or MagmaWaveCount == 4 or MagmaWaveCount == 6 or MagmaWaveCount == 9) then
-		self:CDBar(args.spellId, 17)
-	end
-	self:Message(args.spellId, "Urgent", "Alert")
+	self:Message(args.spellId, "orange", "Alarm")
+	self:Bar(args.spellId, timers[args.spellId][LandslideCount])
 	LandslideCount = LandslideCount + 1
 end
 
 function mod:BurningHatred(args)
-	self:TargetMessage(args.spellId, args.destName, "Attention", "Alarm")
+	self:TargetMessage(args.spellId, args.destName, "red", nil)
 	self:PrimaryIcon(args.spellId, args.destName)
 	if self:Me(args.destGUID) then
 		self:Say(args.spellId)
+		self:PlaySound(args.spellId, "Warning", nil, args.destName)
+	else
+		self:PlaySound(args.spellId, "Alert", nil, args.destName)
 	end
 end
 
@@ -128,139 +114,31 @@ function mod:BurningHatredRemoved(args)
 end
 
 function mod:CrystalSpikes(args)
-	if MagmaWaveCount == 1 then
-		if CrystalSpikesCount == 1 then
-			self:CDBar(args.spellId, 21.91)
-		elseif CrystalSpikesCount == 2 then
-			self:CDBar(args.spellId, 27.89)
-		end
-	end
-	if MagmaWaveCount == 2 then
-		if CrystalSpikesCount == 1 then
-			self:CDBar(args.spellId, 21.9)
-		elseif CrystalSpikesCount == 2 then
-			self:CDBar(args.spellId, 21.93)
-		end
-	end
-	if MagmaWaveCount == 3 then
-		if CrystalSpikesCount == 1 then
-			self:CDBar(args.spellId, 21.9)
-		end
-	end
-	if MagmaWaveCount == 4 then
-		if CrystalSpikesCount == 1 then
-			self:CDBar(args.spellId, 25.41)
-		elseif CrystalSpikesCount == 2 then
-			self:CDBar(args.spellId, 21.9)
-		end
-	end
-	if MagmaWaveCount == 5 then
-		if CrystalSpikesCount == 1 then
-			self:CDBar(args.spellId, 25.45)
-		end
-	end
-	if MagmaWaveCount == 6 then
-		if CrystalSpikesCount == 1 then
-			self:CDBar(args.spellId, 25.48)
-		elseif CrystalSpikesCount == 2 then
-			self:CDBar(args.spellId, 23.8)
-		end
-	end
-	if MagmaWaveCount == 7 then
-		if CrystalSpikesCount == 1 then
-			self:CDBar(args.spellId, 21.91)
-		end
-	end
-	if MagmaWaveCount == 8 then
-		if CrystalSpikesCount == 1 then
-			self:CDBar(args.spellId, 25.47)
-		elseif CrystalSpikesCount == 2 then
-			self:CDBar(args.spellId, 21.9)
-		end
-	end
-	if MagmaWaveCount == 9 then
-		if CrystalSpikesCount == 1 then
-			self:CDBar(args.spellId, 27.46)
-		end
-	end
-	if MagmaWaveCount == 10 then
-		if CrystalSpikesCount == 1 then
-			self:CDBar(args.spellId, 21.9)
-		elseif CrystalSpikesCount == 2 then
-			self:CDBar(args.spellId, 21.9)
-		end
-	end
-	self:Message(args.spellId, "Positive", "Alarm")
+	self:Message(args.spellId, "yellow", "Alarm")
+	self:Bar(args.spellId, timers[args.spellId][CrystalSpikesCount])
 	CrystalSpikesCount = CrystalSpikesCount + 1
 end
 
+function mod:MagmaWavePreCast(args)
+	self:Message(200404, "red") -- Magma Wave
+	self:PlaySound(200404, "long") -- Magma Wave
+end
+
 function mod:MagmaWave(args)
-	if MagmaWaveCount == 1 then
-		self:CDBar(200551, 12.59) -- Crystal Spikes
-		self:CDBar(200637, 14.99) -- Magma Sculptor
-		self:CDBar(200700, 6.59) -- Landslide
-		self:CDBar(200732, 9.83) -- Molten Crash
-		self:CDBar(200404, 60.99)
-	elseif MagmaWaveCount == 2 then
-		self:CDBar(200551, 20.88) -- Crystal Spikes
-		self:CDBar(200637, 25.13) -- Magma Sculptor
-		self:CDBar(200700, 14.88) -- Landslide
-		self:CDBar(200732, 6.59) -- Molten Crash
-		self:CDBar(200404, 61.01)
-	elseif MagmaWaveCount == 3 then
-		self:CDBar(200551, 6.59) -- Crystal Spikes
-		self:CDBar(200637, 35.31) -- Magma Sculptor
-		self:CDBar(200700, 9.03) -- Landslide
-		self:CDBar(200732, 12.25) -- Molten Crash
-		self:CDBar(200404, 62.97)
-	elseif MagmaWaveCount == 4 then
-		self:CDBar(200551, 12.92) -- Crystal Spikes
-		self:CDBar(200637, 43.44) -- Magma Sculptor
-		self:CDBar(200700, 15.35) -- Landslide
-		self:CDBar(200732, 6.62) -- Molten Crash
-		self:CDBar(200404, 60.99)
-	elseif MagmaWaveCount == 5 then
-		self:CDBar(200551, 6.63) -- Crystal Spikes
-		self:CDBar(200637, 53.54) -- Magma Sculptor
-		self:CDBar(200700, 9.08) -- Landslide
-		self:CDBar(200732, 12.34) -- Molten Crash
-		self:CDBar(200404, 63.07)
-	elseif MagmaWaveCount == 6 then
-		self:CDBar(200551, 20.09) -- Crystal Spikes
-		self:CDBar(200700, 14.05) -- Landslide
-		self:CDBar(200732, 6.57) -- Molten Crash
-		self:CDBar(200404, 60.94)
-	elseif MagmaWaveCount == 7 then
-		self:CDBar(200551, 9.08) -- Crystal Spikes
-		self:CDBar(200637, 6.64) -- Magma Sculptor
-		self:CDBar(200700, 11.48) -- Landslide
-		self:CDBar(200732, 14.68) -- Molten Crash
-		self:CDBar(200404, 60.97)
-	elseif MagmaWaveCount == 8 then
-		self:CDBar(200551, 19.22) -- Crystal Spikes
-		self:CDBar(200637, 16.79) -- Magma Sculptor
-		self:CDBar(200700, 6.69) -- Landslide
-		self:CDBar(200732, 9.89) -- Molten Crash
-		self:CDBar(200404, 61.06)
-	elseif MagmaWaveCount == 9 then
-		self:CDBar(200551, 8.67) -- Crystal Spikes
-		self:CDBar(200637, 26.87) -- Magma Sculptor
-		self:CDBar(200700, 13.63) -- Landslide
-		self:CDBar(200732, 6.66) -- Molten Crash
-	else
-		self:CDBar(args.spellId, 60)
-	end
-	self:Message(200404, "Positive", "Long")
-	CrystalSpikesCount = 1
-	LandslideCount = 1
-	MoltenCrashCount = 1
+	self:CastBar(200404, 6)
+	self:Bar(args.spellId, timers[args.spellId][MagmaWaveCount])
 	MagmaWaveCount = MagmaWaveCount + 1
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, _, spellId)
-	if spellId == 201661 or spellId == 201663 then -- Dargrul Ability Callout 02, Dargrul Ability Callout 03
-		self:Message(200404, "Positive", "Long")
-		self:CDBar(200404, self:Normal() and 59.7 or 60.8)
-		self:CastBar(200404, 7, CL.cast:format(self:SpellName(200404)))
+do
+	local prev = 0
+	function mod:LavaGeyserDamage(args)
+		if self:Me(args.destGUID) then
+			local t = GetTime()
+			if t - prev > 2 then
+				prev = t
+				self:Message(args.spellId, "Personal", "Alarm", CL.underyou:format(args.spellName))
+			end
+		end
 	end
 end

@@ -20,6 +20,16 @@ mod:RegisterEnableMob(
 	102232 -- Rockbound Trapper
 )
 
+local mark = {
+  ["{rt1}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1:0|t",
+  ["{rt2}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_2:0|t",
+  ["{rt3}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_3:0|t",
+  ["{rt4}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_4:0|t",
+  ["{rt5}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_5:0|t",
+  ["{rt6}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_6:0|t",
+  ["{rt7}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7:0|t",
+  ["{rt8}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8:0|t"
+}
 --------------------------------------------------------------------------------
 -- Locals
 --
@@ -91,7 +101,7 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_START", "Avalanche", 183088)
 	self:Log("SPELL_CAST_START", "Frenzy", 201983)
 	self:Log("SPELL_CAST_START", "EmberSwipe", 226406)
-	self:Log("SPELL_CAST_START", "WormCall", 183548)
+	--self:Log("SPELL_CAST_START", "WormCall", 183548)
 	self:Log("SPELL_CAST_START", "BarbedTongue", 183539)
 	self:Log("SPELL_CAST_START", "PiercingShards", 226296)
 	self:Log("SPELL_CAST_START", "Fracture", 193505)
@@ -99,12 +109,33 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_START", "Bound", 193585)
 	self:Log("SPELL_CAST_SUCCESS", "Metamorphosis", 193803)
 	self:RegisterEvent("LEARNED_SPELL_IN_TAB")
-	
+	self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 end
 
 --------------------------------------------------------------------------------
 -- Event Handlers
 --
+
+do
+	local prev = nil
+	function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, _, spellGUID, spellId)
+		if spellId == 183573 and spellGUID ~= prev then
+			prev = spellGUID
+			self:Message(183548, "Attention", "Info")
+			if self:BarTimeLeft(CL.count:format(self:SpellName(183548), 1)) < 1 then
+				self:Bar(183548, 30, CL.count:format(self:SpellName(183548), 1))
+			elseif self:BarTimeLeft(CL.count:format(self:SpellName(183548), 2)) < 1 then
+				self:Bar(183548, 30, CL.count:format(self:SpellName(183548), 2))
+			elseif self:BarTimeLeft(CL.count:format(self:SpellName(183548), 3)) < 1 then
+				self:Bar(183548, 30, CL.count:format(self:SpellName(183548), 3))
+			elseif self:BarTimeLeft(CL.count:format(self:SpellName(183548), 4)) < 1 then
+				self:Bar(183548, 30, CL.count:format(self:SpellName(183548), 4))
+			elseif self:BarTimeLeft(CL.count:format(self:SpellName(183548), 5)) < 1 then
+				self:Bar(183548, 30, CL.count:format(self:SpellName(183548), 5))
+			end
+		end
+	end
+end
 
 function mod:LEARNED_SPELL_IN_TAB(_, _, _, _, spellGUID, spellId)
 	if IsSpellKnown(216486) then
@@ -137,20 +168,20 @@ do
 		end
 	end
 	function mod:BarbedTongue(args)
-		self:GetUnitTarget(printTarget, 0.3, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
 	end
 end
 
-function mod:WormCall(args)
-	self:Message(args.spellId, "Attention", "Info")
-	if WormCall == 0 then
-		self:CDBar(args.spellId, 10)
-		WormCall = 1
-	elseif WormCall == 1 then
-		self:CastBar(args.spellId, 10)
-		WormCall = 0
-	end	
-end
+--function mod:WormCall(args)
+--	self:Message(args.spellId, "Attention", "Info")
+--	if WormCall == 0 then
+--		self:CDBar(args.spellId, 10)
+--		WormCall = 1
+--	elseif WormCall == 1 then
+--		self:CastBar(args.spellId, 10)
+--		WormCall = 0
+--	end	
+--end
 
 -- Mightstone Breaker
 function mod:Avalanche(args)
@@ -221,8 +252,20 @@ do
 		end
 	end
 	function mod:StoneGaze(args)
-		self:GetUnitTarget(printTarget, 0.3, args.sourceGUID)
-		self:CDBar(202181, 20.5)
+		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
+		
+		local unit = self:GetUnitIdByGUID(args.sourceGUID)
+		local raidIndex = unit and GetRaidTargetIndex(unit)
+		if raidIndex and raidIndex > 0 then
+			self:CDBar(202181, 20.5, CL.other:format(self:SpellName(202181), mark["{rt" .. raidIndex .. "}"]), 202181)
+			return
+		end
+		for i = 1, 8 do
+			if self:BarTimeLeft(CL.count:format(self:SpellName(202181), i)) < 1 then
+				self:Bar(202181, 20.5, CL.count:format(self:SpellName(202181), i))
+				break
+			end
+		end		
 	end
 end
 
@@ -230,27 +273,21 @@ end
 
 do
 	local function printTarget(self, name, guid)
-		if self:Me(guid) and Bound == 0 then
+		if self:Me(guid) then
 			self:TargetMessage(193585, name, "Personal", "Warning")
-			self:CDBar(193585, 21.5)
 			self:Say(193585)
-			Bound = 1
-		elseif self:Me(guid) and Bound == 1 then
-			self:TargetMessage(193585, name, "Personal", "Warning")
-			self:CastBar(193585, 21.5)
-			self:Say(193585)
-			Bound = 0
-		elseif Bound == 0 then
+		else
 			self:TargetMessage(193585, name, "Personal", "Alarm")
-			self:CDBar(193585, 21.5)
-			Bound = 1
-		elseif Bound == 1 then
-			self:TargetMessage(193585, name, "Personal", "Alarm")
-			self:CastBar(193585, 21.5)
-			Bound = 0
 		end
 	end
 	function mod:Bound(args)
-		self:GetUnitTarget(printTarget, 0.3, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
+		
+		for i = 1, 8 do
+			if self:BarTimeLeft(CL.count:format(self:SpellName(193585), i)) < 1 then
+				self:Bar(193585, 21.5, CL.count:format(self:SpellName(193585), i))
+				break
+			end
+		end
 	end
 end
