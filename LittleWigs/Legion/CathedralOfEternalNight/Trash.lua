@@ -26,6 +26,16 @@ mod:RegisterEnableMob(
 	121569  -- Vilebark Walker
 )
 
+local mark = {
+  ["{rt1}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1:0|t",
+  ["{rt2}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_2:0|t",
+  ["{rt3}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_3:0|t",
+  ["{rt4}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_4:0|t",
+  ["{rt5}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_5:0|t",
+  ["{rt6}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_6:0|t",
+  ["{rt7}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7:0|t",
+  ["{rt8}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8:0|t"
+}
 --------------------------------------------------------------------------------
 -- Localization
 --
@@ -173,7 +183,7 @@ do
 		end
 	end
 	function mod:ChokingVines(args)
-		self:GetUnitTarget(printTarget, 0.5, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
 	end
 end
 
@@ -205,7 +215,7 @@ do
 		end
 	end
 	function mod:FelStrike(args)
-		self:GetUnitTarget(printTarget, 0.5, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
 	end
 end
 
@@ -241,6 +251,19 @@ end
 -- Felborne Botanist
 function mod:BlisteringRain(args)
 	self:Message(args.spellId, "Attention", "Long", CL.casting:format(args.spellName))
+	
+	local unit = self:GetUnitIdByGUID(args.sourceGUID)
+    local raidIndex = unit and GetRaidTargetIndex(unit)
+    if raidIndex and raidIndex > 0 then
+        self:CDBar(237565, 22, CL.other:format(self:SpellName(237565), mark["{rt" .. raidIndex .. "}"]), 237565)
+		return
+    end
+    for i = 1, 8 do
+        if self:BarTimeLeft(CL.count:format(self:SpellName(237565), i)) < 1 then
+            self:Bar(237565, 22, CL.count:format(self:SpellName(237565), i))
+            break
+        end
+    end
 end
 
 -- Hellblaze Temptress
@@ -258,7 +281,7 @@ do
 		end
 	end
 	function mod:AlluringAroma(args)
-		self:GetUnitTarget(printTarget, 0.5, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
 	end
 end
 
