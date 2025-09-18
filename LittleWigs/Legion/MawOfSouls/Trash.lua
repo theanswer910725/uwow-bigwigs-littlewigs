@@ -26,6 +26,16 @@ local NightWatchMariner = false
 local HelarjarChampion = false
 local Skjal = false
 
+local mark = {
+  ["{rt1}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1:0|t",
+  ["{rt2}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_2:0|t",
+  ["{rt3}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_3:0|t",
+  ["{rt4}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_4:0|t",
+  ["{rt5}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_5:0|t",
+  ["{rt6}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_6:0|t",
+  ["{rt7}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7:0|t",
+  ["{rt8}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8:0|t"
+}
 --------------------------------------------------------------------------------
 -- Localization
 --
@@ -63,7 +73,7 @@ function mod:GetOptions()
 		194099, -- Bile Breath
 		195293, -- Debilitating Shout
 		{198324, "SAY", "FLASH"}, -- Give No Quarter
-		196885,
+		{196885, "SAY", "FLASH"}, -- Give No Quarter
 	}, {
 		[200208] = L.soulkeeper,
 		[194657] = L.soulguard,
@@ -167,6 +177,7 @@ do
 	}
 	function mod:ForPull(event, unit, unitTarget, guid)
 		if IsInInstance() then
+			if not unit then return end
 			local InCombat = UnitAffectingCombat(unit)
 			local exists = UnitExists(unit)
 			local canAttack = UnitCanAttack("player", unit)
@@ -238,6 +249,10 @@ do
 				self:StopBar(CL.cast:format(self:SpellName(198324)))
 				self:StopBar(195293)
 				self:StopBar(CL.cast:format(self:SpellName(195293)))
+				for i = 1, 8 do
+				self:StopBar(CL.count:format(self:SpellName(198405), i))
+				self:StopBar(CL.other:format(self:SpellName(198405), mark["{rt" .. i .. "}"]))
+				end
 			end
 		end
 	end
@@ -292,8 +307,22 @@ do
 		if t - (prevTable[args.spellId] or 0) > 1.5 then
 			prevTable[args.spellId] = t
 			self:Message(198405, "Attention", "Info", CL.soon:format(self:SpellName(5782))) -- Bone Chilling Scream, 5782 = "Fear"
-			self:CDBar(198405, 6)
 		end
+		
+		
+		local unit = self:GetUnitIdByGUID(args.sourceGUID)
+		local raidIndex = unit and GetRaidTargetIndex(unit)
+		if raidIndex and raidIndex > 0 then
+			self:CDBar(198405, 6, CL.other:format(self:SpellName(198405), mark["{rt" .. raidIndex .. "}"]), 198405)
+			self:ScheduleTimer("CDBar", 6, 198405, 18, CL.other:format(self:SpellName(198405), mark["{rt" .. raidIndex .. "}"]), 198405)
+			return
+		end
+		for i = 1, 8 do
+			if self:BarTimeLeft(CL.count:format(self:SpellName(198405), i)) < 1 then
+				self:Bar(198405, 6, CL.count:format(self:SpellName(198405), i))
+				break
+			end
+		end		
 	end
 
 	function mod:BoneChillingScream(args)
@@ -396,13 +425,25 @@ function mod:DebilitatingShout(args)
 	self:Message(args.spellId, "Urgent", "Long")
 end
 
-function mod:GiveNoQuarter(args)
-	if self:BarTimeLeft(195293) > 0 then
-		self:CDBar(args.spellId, self:BarTimeLeft(195293)+4)
-	else
-		self:CDBar(args.spellId, 9.7)
+do
+	local function printTarget(self, name, guid)
+		if self:Me(guid) then
+			self:TargetMessage(196885, name, "Important", "Bam")
+			self:Flash(196885)
+			self:Say(196885)
+		else
+			self:TargetMessage(196885, name, "Important", "Alarm")
+		end
 	end
-	self:Message(args.spellId, "Important", "Warning")
+
+	function mod:GiveNoQuarter(args)
+		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
+		if self:BarTimeLeft(195293) > 0 then
+			self:CDBar(args.spellId, self:BarTimeLeft(195293)+4)
+		else
+			self:CDBar(args.spellId, 9.7)
+		end
+	end
 end
 
 function mod:GiveNoQuarterR(args)
