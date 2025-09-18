@@ -37,9 +37,15 @@ if L then
 	L.FelOrb = "Сфера: +10% крит"
 	L.ArcanePowerConduit = "Проводник: отключение големов"
 	L.FlaskoftheSolemnNight = "Настой: килл босс 25%"
+	
+	L.Room = "Комната активирована"
 
 	L.custom_on_announcement = "Анонс всех бафов (используйте макрос после лодки)"
 	L.custom_on_announcement_desc = "/ц Настой /ц Проводник /ц Выброшенный /ц Раненый /ц Рыночные /ц Статуя /ц Сфера /ц Инфернальный /ц Магический /ц Закуски /ц Отвар /ц Теневой /ц Промок"
+
+	L.custom_on_spyscan = "Сканер шпионов"
+	L.custom_on_spyscan_desc = "Сканирует шпионов серверной командой _scan при выборе их в цель и сообщает результаты."
+	L.custom_on_spyscan_icon = 213213
 
 	L.announce_buff_items = "Объявление о диверсионных механизмах"
 	L.announce_buff_items_desc = "Объявляет все доступные в подземелье механизмы для совершения диверсии и кто может их использовать."
@@ -55,6 +61,9 @@ if L then
 
 	L.clueFound = "Подсказка найдена (%d/5): |cffffffff%s|r"
 	L.spyFound = "Шпион найден игроком %s!"
+	L.spyNoticed = "Игрок %s кое-что замечает!"
+	L.spyNoticedChat = "[LittleWigs] Вижу шпиона !"
+	L.provenspy = "|cffff0000Это не шпион!|r |cff69ccf0Выберите следующую цель.|r"
 	L.spyFoundChat = "Шпион найден!"
 	L.spyFoundPattern = "зачем же так спешить" -- Now now, let's not be hasty [player]. Why don't you follow me so we can talk about this in a more private setting...
 
