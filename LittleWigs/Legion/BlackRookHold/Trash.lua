@@ -20,6 +20,17 @@ mod:RegisterEnableMob(
 	102095 -- Risen Lancer
 )
 
+local mark = {
+  ["{rt1}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1:0|t",
+  ["{rt2}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_2:0|t",
+  ["{rt3}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_3:0|t",
+  ["{rt4}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_4:0|t",
+  ["{rt5}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_5:0|t",
+  ["{rt6}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_6:0|t",
+  ["{rt7}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7:0|t",
+  ["{rt8}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8:0|t"
+}
+
 --------------------------------------------------------------------------------
 -- Localization
 --
@@ -149,7 +160,7 @@ do
 		end
 	end
 	function mod:ArcaneBlitzCast(args)
-		self:GetUnitTarget(printTarget, 0.3, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
 	end
 end
 
@@ -168,19 +179,21 @@ function mod:BonebreakingStrike(args)
 	self:Message(args.spellId, "Urgent", "Alarm", CL.incoming:format(args.spellName))
 end
 
-
-do
-	local prev = 0
-	function mod:CommandingShout(args)
-		local t = GetTime()
-		if t-prev > 60 then
-			prev = t
-			self:CDBar(args.spellId, 30)
-			self:CastBar(args.spellId, 60)
-			self:Message(args.spellId, "Attention", "Info")
-		elseif t-prev > 0.5 and t-prev < 60 then
-			self:Message(args.spellId, "Attention", "Info")
+function mod:CommandingShout(args)
+	if self:MobId(args.sourceGUID) == 98243 and args.sourceGUID == args.destGUID then
+		local unit = self:GetUnitIdByGUID(args.sourceGUID)
+		local raidIndex = unit and GetRaidTargetIndex(unit)
+		if raidIndex and raidIndex > 0 then
+			self:CDBar(225998, 30, CL.other:format(self:SpellName(225998), mark["{rt" .. raidIndex .. "}"]), 225998)
+			return
 		end
+		for i = 1, 8 do
+			if self:BarTimeLeft(CL.count:format(self:SpellName(225998), i)) < 1 then
+				self:Bar(225998, 30, CL.count:format(self:SpellName(225998), i))
+				break
+			end
+		end
+		self:Message(args.spellId, "Attention", "Info")
 	end
 end
 
@@ -210,7 +223,7 @@ do
 		end
 	end
 	function mod:BrutalAssault(args)
-		self:GetUnitTarget(printTarget, 0.4, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
 	end
 end
 
@@ -230,7 +243,7 @@ do
 	end
 
 	function mod:Shoot(args)
-		self:ScheduleTimer("GetUnitTarget", 0.1, printTarget, 0.5, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
 	end
 end
 

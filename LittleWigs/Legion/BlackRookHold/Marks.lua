@@ -11,7 +11,8 @@ mod:RegisterEnableMob(
     102095, --восставший копейщик
     102788, --злобный покоритель скверны
     98810,  --страж гнева - мастер клинка
-    98370   --Фантомный советник
+    98370,   --Фантомный советник
+	98243   --Лишенный души защитник
 )
 
 --------------------------------------------------------------------------------
@@ -33,6 +34,7 @@ if L then
 	L.custom_off_Mob4 = "Felspite Dominator"
 	L.custom_off_Mob5 = "Wrathguard Bladelord"
 	L.custom_off_Mob6 = "Ghostly Councilor"
+	L.custom_off_Mob7 = "Soul-Torn Champion"
 end
 --------------------------------------------------------------------------------
 -- Locals
@@ -54,6 +56,7 @@ function mod:GetOptions()
 		"custom_off_Mob4",
 		"custom_off_Mob5",
 		"custom_off_Mob6",
+		"custom_off_Mob7",
 	}, {
 		["custom_on_Allowmarks"] = "general",
 		["custom_off_Mob1"] = L.Choose,
@@ -62,7 +65,7 @@ end
 
 function mod:OnBossEnable()
 	self:RegisterTargetEvents("AutoMarks")
-	self:Death("MarkDeath", 101839, 98691, 102095, 102788, 98810, 98370)
+	self:Death("MarkDeath", 101839, 98691, 102095, 102788, 98810, 98370, 98243)
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", "ResetMobAddList")
 	self:RegisterEvent("PLAYER_REGEN_DISABLED", "ResetMobAddList")
 	self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
@@ -91,7 +94,7 @@ do
 			if (self:GetOption("custom_off_Mob1") and mobID == 101839) then
 				SetRaidTarget(unit, 8)
 			end
-			if (self:GetOption("custom_off_Mob2") and mobID == 98691) or (self:GetOption("custom_off_Mob3") and mobID == 102095) or (self:GetOption("custom_off_Mob4") and mobID == 102788) or (self:GetOption("custom_off_Mob5") and mobID == 98810)or (self:GetOption("custom_off_Mob6") and mobID == 98370) then
+			if (self:GetOption("custom_off_Mob2") and mobID == 98691) or (self:GetOption("custom_off_Mob3") and mobID == 102095) or (self:GetOption("custom_off_Mob4") and mobID == 102788) or (self:GetOption("custom_off_Mob5") and mobID == 98810) or (self:GetOption("custom_off_Mob6") and mobID == 98370) or (self:GetOption("custom_off_Mob7") and mobID == 98243) then
 				for i = 1, 7 do
 					if not MobAddMarks[i] and not GetRaidTargetIndex(unit) then
 						SetRaidTarget(unit, i)
