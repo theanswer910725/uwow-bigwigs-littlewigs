@@ -27,6 +27,16 @@ local Ssaveh = false
 local Hardshell = false
 local Siltwalker = false
 
+local mark = {
+  ["{rt1}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1:0|t",
+  ["{rt2}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_2:0|t",
+  ["{rt3}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_3:0|t",
+  ["{rt4}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_4:0|t",
+  ["{rt5}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_5:0|t",
+  ["{rt6}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_6:0|t",
+  ["{rt7}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7:0|t",
+  ["{rt8}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8:0|t"
+}
 --------------------------------------------------------------------------------
 -- Localization
 --
@@ -179,6 +189,7 @@ do
 	}
 	function mod:ForPull(event, unit, unitTarget, guid)
 		if IsInInstance() then
+			if not unit then return end
 			local InCombat = UnitAffectingCombat(unit)
 			local exists = UnitExists(unit)
 			local canAttack = UnitCanAttack("player", unit)
@@ -320,16 +331,21 @@ do
 	end
 end
 
-do
-	local prev = 0
-	function mod:PolymorphFishCast(args)
-		self:Message(args.spellId, "Attention", "Long", CL.casting:format(args.spellName))
-		local t = GetTime()
-		if t-prev > 15 then
-			prev = t
-			self:CDBar(197105, 18)
-		end
-	end
+function mod:PolymorphFishCast(args)
+	self:Message(args.spellId, "Attention", "Long", CL.casting:format(args.spellName))
+			
+	local unit = self:GetUnitIdByGUID(args.sourceGUID)
+    local raidIndex = unit and GetRaidTargetIndex(unit)
+    if raidIndex and raidIndex > 0 then
+        self:CDBar(197105, 18, CL.other:format(self:SpellName(197105), mark["{rt" .. raidIndex .. "}"]), 197105)
+		return
+    end
+    for i = 1, 8 do
+        if self:BarTimeLeft(CL.count:format(self:SpellName(197105), i)) < 1 then
+            self:Bar(197105, 18, CL.count:format(self:SpellName(197105), i))
+            break
+        end
+    end
 end
 
 -- Gritslime Snail
@@ -383,17 +399,22 @@ end
 
 -- Mak'rana Hardshell
 
-do
-	local prev = 0
-	function mod:Armorshell(args)
-		self:Message(args.spellId, "Attention", "Alert", CL.casting:format(args.spellName))
-		local t = GetTime()
-		if t-prev > 17 then
-			prev = t
-			self:CDBar(196175, 18.1)
-			self:CastBar(196175, 36.2)
-		end
-	end
+
+function mod:Armorshell(args)
+	self:Message(args.spellId, "Attention", "Alert", CL.casting:format(args.spellName))
+
+    local unit = self:GetUnitIdByGUID(args.sourceGUID)
+    local raidIndex = unit and GetRaidTargetIndex(unit)
+    if raidIndex and raidIndex > 0 then
+        self:CDBar(196175, 18.1, CL.other:format(self:SpellName(196175), mark["{rt" .. raidIndex .. "}"]), 196175)
+		return
+    end
+    for i = 1, 8 do
+        if self:BarTimeLeft(CL.count:format(self:SpellName(196175), i)) < 1 then
+            self:Bar(196175, 18.1, CL.count:format(self:SpellName(196175), i))
+            break
+        end
+    end	
 end
 
 -- Restless Tides
