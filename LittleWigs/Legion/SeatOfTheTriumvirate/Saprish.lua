@@ -88,7 +88,8 @@ do
 			self:ScheduleTimer("TargetMessage", 0.3, args.spellId, list, "Urgent", "Alert")
 		end
 		if self:Me(args.destGUID)then
-			self:Say(args.spellId)
+			--self:Say(args.spellId)
+			self:SayCountdown(247245, 6, 4, 3)
 		end
 	end
 end
