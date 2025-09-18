@@ -18,6 +18,16 @@ mod:RegisterEnableMob(
 	105617 -- Eredar Chaosbringer
 )
 
+local mark = {
+  ["{rt1}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1:0|t",
+  ["{rt2}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_2:0|t",
+  ["{rt3}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_3:0|t",
+  ["{rt4}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_4:0|t",
+  ["{rt5}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_5:0|t",
+  ["{rt6}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_6:0|t",
+  ["{rt7}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7:0|t",
+  ["{rt8}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8:0|t"
+}
 --------------------------------------------------------------------------------
 -- Locals
 --
@@ -105,6 +115,7 @@ function mod:OnBossEnable()
 	
 	-- Nightborne Reclaimer
 	self:Log("SPELL_AURA_APPLIED", "EyeoftheVortexApplied", 211007)
+	self:Log("SPELL_CAST_START", "EyeoftheVortex", 211007)
 
 	-- Withered Manawraith, Wrathguard Felblade
 	self:Log("SPELL_AURA_APPLIED", "PeriodicDamage", 210750, 211745) -- Collapsing Rift, Fel Strike
@@ -142,6 +153,7 @@ end
 
 do
 	function mod:CheckTargets(event, unit, guid)
+		if not unit then return end
 		local guid = UnitGUID(unit)
 		local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
 		if (self:MobId(guid) == 106059 or self:MobId(guid) == 98756) and UnitAffectingCombat(unit) and not mobCollector[guid] and hp < 60 then
@@ -198,7 +210,7 @@ do
 		end
 	end
 	function mod:EyeoftheBeast(args)
-		self:GetUnitTarget(printTarget, 0.4, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
 	end
 end
 
@@ -223,16 +235,24 @@ do
 			prev = spellGUID
 			self:Message(193938, "Urgent", "Warning", CL.casting:format(self:SpellName(193938)))
 		end
-		if spellId == 211007 and t-preva > 18 and spellGUID ~= prev then
-			prev = spellGUID
-			preva = t
-			self:CDBar(211007, 20)
-			self:Message(211007, "Urgent", "Banana Peel Slip", CL.casting:format(self:SpellName(211007)))
-		elseif spellId == 211007 and t-preva > 0 and spellGUID ~= prev then
-			prev = spellGUID
-			self:Message(211007, "Urgent", "Banana Peel Slip", CL.casting:format(self:SpellName(211007)))
-		end
 	end
+end
+
+function mod:EyeoftheVortex(args)
+	self:Message(211007, "Urgent", "Banana Peel Slip", CL.casting:format(self:SpellName(211007)))
+
+    local unit = self:GetUnitIdByGUID(args.sourceGUID)
+    local raidIndex = unit and GetRaidTargetIndex(unit)
+    if raidIndex and raidIndex > 0 then
+        self:CDBar(211007, 20, CL.other:format(self:SpellName(211007), mark["{rt" .. raidIndex .. "}"]), 211007)
+		return
+    end
+    for i = 1, 8 do
+        if self:BarTimeLeft(CL.count:format(self:SpellName(211007), i)) < 1 then
+            self:Bar(211007, 20, CL.count:format(self:SpellName(211007), i))
+            break
+        end
+    end
 end
 
 -- Arcane Anomaly
@@ -248,6 +268,19 @@ end
 -- Warp Shade
 function mod:PhaseBreach(args)
 	self:Message(args.spellId, "Urgent", "Warning", CL.casting:format(args.spellName))
+	
+    local unit = self:GetUnitIdByGUID(args.sourceGUID)
+    local raidIndex = unit and GetRaidTargetIndex(unit)
+    if raidIndex and raidIndex > 0 then
+        self:CDBar(211115, 12, CL.other:format(self:SpellName(211115), mark["{rt" .. raidIndex .. "}"]), 211115)
+		return
+    end
+    for i = 1, 8 do
+        if self:BarTimeLeft(CL.count:format(self:SpellName(211115), i)) < 1 then
+            self:Bar(211115, 12, CL.count:format(self:SpellName(211115), i))
+            break
+        end
+    end	
 end
 
 -- Withered Manawraith, Wrathguard Felblade

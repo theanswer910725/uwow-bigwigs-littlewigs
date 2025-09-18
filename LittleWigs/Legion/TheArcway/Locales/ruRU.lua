@@ -27,5 +27,5 @@ if L then
 	L.custom_off_Mob3 = "Иссохший - магический призрак"
 	L.custom_off_Mob4 = "Искаженная тень"
 	L.custom_off_Mob5 = "Волшебная аномалия"
-
+	L.custom_off_Mob6 = "Ночнорожденный-возродитель"
 end
