@@ -27,6 +27,17 @@ mod:RegisterEnableMob(
 )
 
 local mobcount = 0
+
+local mark = {
+  ["{rt1}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1:0|t",
+  ["{rt2}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_2:0|t",
+  ["{rt3}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_3:0|t",
+  ["{rt4}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_4:0|t",
+  ["{rt5}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_5:0|t",
+  ["{rt6}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_6:0|t",
+  ["{rt7}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7:0|t",
+  ["{rt8}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8:0|t"
+}
 --------------------------------------------------------------------------------
 -- Localization
 --
@@ -249,7 +260,7 @@ do
 		end
 	end
 	function mod:ValarjarRunecarver(args)
-		self:GetUnitTarget(printTarget, 0.5, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
 	end
 end
 
@@ -268,13 +279,25 @@ do
 	end
 	function mod:WickedDagger(args)
 		self:CDBar(args.spellId, 13)
-		self:GetUnitTarget(printTarget, 0.4, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
 	end
 end
 
 function mod:UnrulyYell(args)
 	self:Message(args.spellId, "Important", "Alarm")
-	self:CDBar(args.spellId, 20)
+	
+    local unit = self:GetUnitIdByGUID(args.sourceGUID)
+    local raidIndex = unit and GetRaidTargetIndex(unit)
+    if raidIndex and raidIndex > 0 then
+        self:CDBar(199726, 20, CL.other:format(self:SpellName(199726), mark["{rt" .. raidIndex .. "}"]), 199726)
+		return
+    end
+    for i = 1, 8 do
+        if self:BarTimeLeft(CL.count:format(self:SpellName(199726), i)) < 1 then
+            self:Bar(199726, 20, CL.count:format(self:SpellName(199726), i))
+            break
+        end
+    end	
 end
 
 function mod:PenetratingShot(args)
@@ -283,20 +306,23 @@ end
 
 do
 	local prev = nil
-	local preva = 0
-	function mod:UNIT_SPELLCAST_START(_, _, _, _, spellGUID, spellId)
-		local t = GetTime()
-		if spellId == 199210 and spellGUID ~= prev and t-preva > 9 then
+	function mod:UNIT_SPELLCAST_START(_, unit, _, _, spellGUID, spellId)
+		if spellId == 199210 and spellGUID ~= prev then
 			prev = spellGUID
-			preva = t
 			self:Message(199210, "Important", "Long")
-			self:CDBar(199210, 20)
-		elseif spellId == 199210 and spellGUID ~= prev and t-preva > 0.1 then
-			prev = spellGUID
-			preva = t
-			self:Message(199210, "Important", "Long")
-			self:CastBar(199210, 20)
-		end
+			local unit = self:GetUnitIdByGUID(UnitGUID(unit))
+			local raidIndex = unit and GetRaidTargetIndex(unit)
+			if raidIndex and raidIndex > 0 then
+				self:CDBar(199210, 19, CL.other:format(self:SpellName(199210), mark["{rt" .. raidIndex .. "}"]), 199210)
+				return
+			end
+			for i = 1, 8 do
+				if self:BarTimeLeft(CL.count:format(self:SpellName(199210), i)) < 1 then
+					self:Bar(199210, 19, CL.count:format(self:SpellName(199210), i))
+					break
+				end
+			end
+		end	
 	end
 end
 
@@ -313,7 +339,7 @@ do
 	end
 
 	function mod:CrackleCast(args)
-		self:GetUnitTarget(printTarget, 0.5, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
 	end
 end
 
@@ -422,6 +448,29 @@ do
 			end
 		elseif GetGossipOptions() and self:GetOption("custom_off_multiple_kings") and autoTalk[mobId] then
 			sendChatMessage(L.Kings:format(self:UnitName("target")))
+			if UnitIsGroupLeader("player") then
+local btn = CreateFrame("Button", nil, GossipFrame, "UIPanelButtonTemplate")
+btn:SetPoint("TOPLEFT", 0, -12)
+btn:SetSize(100, 40)
+btn:SetText("Ready check")
+btn:SetScript("OnClick", function(self, button, down)
+    DoReadyCheck()
+end)
+btn:RegisterForClicks("AnyDown")
+
+local pullBtn = CreateFrame("Button", "!pull", GossipFrame, "UIPanelButtonTemplate")
+pullBtn:SetSize(100, 40)
+pullBtn:SetPoint("TOPRIGHT", 0, -12)
+pullBtn:SetText("!pull")
+pullBtn:SetScript("OnClick", function(self, button, down)
+    SendChatMessage("!pull", "PARTY")
+    btn:Hide()
+    pullBtn:Hide()
+end)
+pullBtn:RegisterForClicks("AnyDown")
+pullBtn.text:SetPoint("CENTER")
+pullBtn.text:SetText("!pull")
+			end
 		end
 	end
 end
