@@ -37,20 +37,21 @@ function mod:GetOptions()
 end
 
 function mod:OnBossEnable()
-	self:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "PowerDischarge", "boss1")
-	self:Log("SPELL_CAST_SUCCESS", "SummonVolatileEnergy", 227267)
+	--self:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "PowerDischargeA", "boss1")
+	self:Log("SPELL_SUMMON", "SummonVolatileEnergy", 227267)
 	self:Log("SPELL_PERIODIC_DAMAGE", "PowerDischargeDamage", 227465)
 	self:Log("SPELL_PERIODIC_MISSED", "PowerDischargeDamage", 227465)
-	self:Log("SPELL_AURA_APPLIED", "ArcLightning", 227270)
-	self:Log("SPELL_AURA_APPLIED_DOSE", "ArcLightningApplied", 227270)
+	--self:Log("SPELL_AURA_APPLIED", "ArcLightning", 227270)
+	--self:Log("SPELL_AURA_APPLIED_DOSE", "ArcLightningApplied", 227270)
 	self:Log("SPELL_AURA_APPLIED", "Evocation", 227254)
 	self:Log("SPELL_AURA_REMOVED", "EvocationOver", 227254)
 	self:Death("ImageDeath", 114249)
 end
 
 function mod:OnEngage()
-	self:Bar(227267, 5) -- Summon Volatile Energy
-	self:CDBar(227279, 12) -- Power Discharge
+	self:ScheduleTimer("PowerDischarge", 13)
+	self:Bar(227267, 6) -- Summon Volatile Energy
+	self:CDBar(227279, 13) -- Power Discharge
 	self:CDBar(227254, 53) -- Evocation
 	addsKilled = 0
 end
@@ -58,6 +59,16 @@ end
 --------------------------------------------------------------------------------
 -- Event Handlers
 --
+
+function mod:PowerDischarge()
+	if self:BarTimeLeft(227254) > 14 then
+		self:CDBar(227279, 14) -- Power Discharge
+		self:ScheduleTimer("PowerDischarge", 14)
+	end
+	self:Message(227279, "Urgent", "Alert")
+end
+
+
 function mod:ArcLightningApplied(args)
 	local amount = args.amount
 	if amount % 3 == 0 then
@@ -72,10 +83,13 @@ end
 
 function mod:SummonVolatileEnergy(args)
 	self:Message(args.spellId, "Attention", "Info")
-	self:Bar(args.spellId, 9.7)
+	--self:Bar(228738, 8)
+	if self:BarTimeLeft(227254) > 10 then
+		self:Bar(args.spellId, 10)
+	end
 end
 
-function mod:PowerDischarge(_, _, _, _, spellId)
+function mod:PowerDischargeA(_, _, _, _, spellId)
 	if spellId == 227278 then
 		self:Message(227279, "Urgent", "Alert")
 		self:CDBar(227279, 12)
@@ -109,6 +123,8 @@ function mod:ImageDeath(args)
 end
 
 function mod:EvocationOver(args)
+	self:CDBar(227279, 13) -- Power Discharge
+	self:ScheduleTimer("PowerDischarge", 13)
 	self:Message(args.spellId, "Neutral", "Info", CL.over:format(args.spellName))
 	self:CDBar(args.spellId, 53)
 	self:Bar(227267, 6)

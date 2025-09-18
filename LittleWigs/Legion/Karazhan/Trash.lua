@@ -205,6 +205,7 @@ end
 
 do
 	function mod:CheckTargets(event, unit, guid, name)
+		if not unit then return end
 		local guid = UnitGUID(unit)
 		local n = self:UnitName(unit)
 		local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
@@ -342,7 +343,7 @@ do
 			prev = t
 			self:Bar(args.spellId, 32)
 		end
-		self:GetUnitTarget(printTarget, 0.4, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
 	end
 end
 
@@ -452,7 +453,7 @@ do
 		end
 	end
 	function mod:Flirt(args)
-		self:GetUnitTarget(printTarget, 0.4, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
 	end
 end
 

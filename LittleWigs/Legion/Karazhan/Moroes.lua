@@ -225,7 +225,7 @@ do
 		end
 	end
 	function mod:Vanish(args)
-		self:GetUnitTarget(printTarget, 0.3, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
 		self:CDBar(227736, 20.5)
 		self:SecondaryIcon(args.spellId, args.destName)
 	end
