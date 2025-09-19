@@ -19,6 +19,16 @@ mod:RegisterEnableMob(
 	84990  -- Addled Arcanomancer
 )
 
+local mark = {
+  ["{rt1}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1:0|t",
+  ["{rt2}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_2:0|t",
+  ["{rt3}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_3:0|t",
+  ["{rt4}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_4:0|t",
+  ["{rt5}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_5:0|t",
+  ["{rt6}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_6:0|t",
+  ["{rt7}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7:0|t",
+  ["{rt8}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8:0|t"
+}
 --------------------------------------------------------------------------------
 -- Localization
 --
@@ -381,7 +391,17 @@ end
 function mod:SpatialDisruption(args)
 	self:Message(args.spellId, "red")
 	self:PlaySound(args.spellId, "alarm")
-	if self:BarTimeLeft(args.spellId) < 2 then
-		self:CDBar(args.spellId, 22)
-	end
+	
+    local unit = self:GetUnitIdByGUID(args.sourceGUID)
+    local raidIndex = unit and GetRaidTargetIndex(unit)
+    if raidIndex and raidIndex > 0 then
+        self:CDBar(426974, 22, CL.other:format(self:SpellName(426974), mark["{rt" .. raidIndex .. "}"]), 426974)
+		return
+    end
+    for i = 1, 8 do
+        if self:BarTimeLeft(CL.count:format(self:SpellName(426974), i)) < 1 then
+            self:Bar(426974, 22, CL.count:format(self:SpellName(426974), i))
+            break
+        end
+    end	
 end

@@ -33,6 +33,12 @@ if L then
 	L.custom_off_always_show_casts = "Всегда показывать цель заклинания для |cff71d5ffЯрость природы|r/|cff71d5ffВодяная стрела|r"
 end
 
+local L = BigWigs:NewBossLocale("Yalnu", "ruRU")
+if not L then return end
+if L then
+	L.mobname = "Яростный плеточник"
+end
+
 L = BigWigs:NewBossLocale("=> AutoMarks <=            ", "ruRU")
 if L then
 	L.custom_on_Allowmarks = "Разрешить маркировать выбранных мобов"
