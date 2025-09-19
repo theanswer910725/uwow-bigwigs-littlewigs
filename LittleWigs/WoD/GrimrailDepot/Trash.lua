@@ -18,6 +18,16 @@ mod:RegisterEnableMob(
 	82590   -- Grimrail Scout
 )
 
+local mark = {
+  ["{rt1}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1:0|t",
+  ["{rt2}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_2:0|t",
+  ["{rt3}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_3:0|t",
+  ["{rt4}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_4:0|t",
+  ["{rt5}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_5:0|t",
+  ["{rt6}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_6:0|t",
+  ["{rt7}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7:0|t",
+  ["{rt8}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8:0|t"
+}
 --------------------------------------------------------------------------------
 -- Localization
 --
@@ -301,9 +311,20 @@ end
 -- Grom'kar Far Seer
 
 function mod:StormShield(args)
-	if self:Interrupter() then
-		self:Message(args.spellId, "Important", "Warning", CL.casting:format(args.spellName))
-	end
+    self:Message(args.spellId, "Important", "Warning", CL.casting:format(args.spellName))
+	
+    local unit = self:GetUnitIdByGUID(args.sourceGUID)
+    local raidIndex = unit and GetRaidTargetIndex(unit)
+    if raidIndex and raidIndex > 0 then
+        self:CDBar(166335, 16, CL.other:format(self:SpellName(166335), mark["{rt" .. raidIndex .. "}"]), 166335)
+		return
+    end
+    for i = 1, 8 do
+        if self:BarTimeLeft(CL.count:format(self:SpellName(166335), i)) < 1 then
+            self:Bar(166335, 16, CL.count:format(self:SpellName(166335), i))
+            break
+        end
+    end
 end
 
 function mod:StormShieldApplied(args)
