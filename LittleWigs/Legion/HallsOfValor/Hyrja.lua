@@ -80,6 +80,11 @@ function mod:ShieldOfLight(args)
 end
 
 function mod:EyeOfTheStormOrSanctify(args)
+	if self:MobId(args.sourceGUID) ~= 95833 then
+		-- don't alert for trash version
+		return
+	end
+	
 	local spellId = args.spellId
 	if spellId == 200901 then
 		self:CDBar(192307, 30)

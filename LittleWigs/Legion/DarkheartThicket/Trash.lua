@@ -17,6 +17,16 @@ mod:RegisterEnableMob(
 	100527 -- Dreadfire Imp
 )
 
+local mark = {
+  ["{rt1}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1:0|t",
+  ["{rt2}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_2:0|t",
+  ["{rt3}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_3:0|t",
+  ["{rt4}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_4:0|t",
+  ["{rt5}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_5:0|t",
+  ["{rt6}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_6:0|t",
+  ["{rt7}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7:0|t",
+  ["{rt8}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8:0|t"
+}
 --------------------------------------------------------------------------------
 -- Locals
 --
@@ -169,18 +179,23 @@ end
 
 do
 	local prev = nil
-	function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, _, spellGUID, spellId)
-		if spellId == 198799 and spellGUID ~= prev and VileMushroom == 0 then
+	function mod:UNIT_SPELLCAST_SUCCEEDED(_, unit, _, _, spellGUID, spellId)
+		if spellId == 198799 and spellGUID ~= prev then
 			prev = spellGUID
-			self:CDBar(198916, 16)
-			VileMushroom = 1
 			self:Message(198916, "Important", "Long")
-		elseif spellId == 198799 and spellGUID ~= prev and VileMushroom == 1 then
-			prev = spellGUID
-			self:CastBar(198916, 16)
-			VileMushroom = 0
-			self:Message(198916, "Important", "Long")
-		end
+			local unit = self:GetUnitIdByGUID(UnitGUID(unit))
+			local raidIndex = unit and GetRaidTargetIndex(unit)
+			if raidIndex and raidIndex > 0 then
+				self:CDBar(198916, 16, CL.other:format(self:SpellName(198916), mark["{rt" .. raidIndex .. "}"]), 198916)
+				return
+			end
+			for i = 1, 8 do
+				if self:BarTimeLeft(CL.count:format(self:SpellName(198916), i)) < 1 then
+					self:Bar(198916, 16, CL.count:format(self:SpellName(198916), i))
+					break
+				end
+			end
+		end	
 	end
 end
 

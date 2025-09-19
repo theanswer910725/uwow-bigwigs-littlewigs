@@ -56,11 +56,11 @@ do
 		if self:Me(guid) then
 			self:Say(204646)
 			self:SayCountdown(204646, 5, 8, 3)
-			self:Flash(args.spellId)
+			self:Flash(204646)
 		end
 	end
 	function mod:CrushingGrip(args)
-		self:GetUnitTarget(printTarget, 0.4, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
 	end
 	function mod:CrushingGripEnd(args)
 		self:PrimaryIcon(204646, name)

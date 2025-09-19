@@ -205,6 +205,7 @@ end
 
 do
 	function mod:CheckTargets(event, unit, guid, name)
+		if not unit then return end
 		local guid = UnitGUID(unit)
 		local n = self:UnitName(unit)
 		local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100

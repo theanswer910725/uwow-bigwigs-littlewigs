@@ -45,6 +45,16 @@ mod:RegisterEnableMob(
 	108154 -- Arcane Keys
 )
 
+local mark = {
+  ["{rt1}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1:0|t",
+  ["{rt2}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_2:0|t",
+  ["{rt3}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_3:0|t",
+  ["{rt4}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_4:0|t",
+  ["{rt5}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_5:0|t",
+  ["{rt6}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_6:0|t",
+  ["{rt7}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7:0|t",
+  ["{rt8}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8:0|t"
+}
 --------------------------------------------------------------------------------
 -- Locals
 --
@@ -76,6 +86,8 @@ local Jazshariu = false
 local Felbound = false
 local Mistress = false
 local Gerenth = false
+
+local spamscan = false
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -118,9 +130,15 @@ if L then
 	L.FelOrb = "Fel Orb: 10% Crit"
 	L.ArcanePowerConduit = "Arcane Power Conduit"
 	L.FlaskoftheSolemnNight = "Flask of the Solemn Night"
+	
+	L.Room = "The room is activated"
+
+	L.custom_on_spyscan = "Spy scanner"
+	L.custom_on_spyscan_desc = "Scans spies with the server command _scan when they are selected as a target and reports the results."
+	L.custom_on_spyscan_icon = 213213
 
 	L.custom_on_announcement = "Announce all buff items (use macros after the boat)."
-	L.custom_on_announcement_desc = "/tar Conduit /tar Flask /tar Orb /tar Infernal /tar Magical /tar Refreshments /tar Brew /tar Umbral /tar Waterlogged /tar Bazaar /tar Statue /tar Discarded /tar Wounded"
+	L.custom_on_announcement_desc = "/tar Arcane /tar Flask /tar Fel /tar Infernal /tar Magical /tar Nightshade /tar Starlight /tar Umbral /tar Waterlogged /tar Bazaar /tar Lifesized /tar Discarded /tar Wounded"
 	L.custom_on_announcement_icon = 211080
 
 	L.announce_buff_items = "Announce buff items"
@@ -140,6 +158,9 @@ if L then
 
 	L.clueFound = "Clue found (%d/5): |cffffffff%s|r"
 	L.spyFound = "Spy found by %s!"
+	L.spyNoticed = "The %s player notices something!"
+	L.spyNoticedChat = "[LittleWigs] I see a spy!"
+	L.provenspy = "|cffff0000This is not a spy!|r |cff69ccf0Choose next target.|r"
 	L.spyFoundChat = englishSpyFound
 	L.spyFoundPattern = "Now now, let's not be hasty" -- Now now, let's not be hasty [player]. Why don't you follow me so we can talk about this in a more private setting...
 
@@ -228,6 +249,7 @@ local matterMarker = mod:AddMarkerOption(true, "npc", 8, 209516, 8)
 function mod:GetOptions()
 	return {
 		"custom_on_announcement",
+		"custom_on_spyscan",
 		"announce_buff_items",
 		"custom_on_use_buff_items",
 		{"spy_helper", "INFOBOX"},
@@ -235,6 +257,7 @@ function mod:GetOptions()
 		209524,
 		215854,
 		210253,
+		213514, -- Conversation
 		209027, -- Quelling Strike (Duskwatch Guard)
 		209033, -- Fortification (Duskwatch Guard)
 		225100, -- Charging Station (Guardian Construct)
@@ -298,6 +321,7 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_START", "DisableBeacon", 210253)
 	self:Log("SPELL_CAST_START", "NightborneBoat", 209524)
 	self:Log("SPELL_CAST_SUCCESS", "Boat", 209524)
+	
 	-- Charging Station, Shadow Bolt Volley, Carrion Swarm, Shockwave, Drain Magic, Wild Detonation, Nightfall Orb, Seal Magic, Fortification, Uncontrolled Blast, Wild Magic, Mighty Stomp, Shadowflame Breath, Bewitch
 	self:Log("SPELL_CAST_START", "AlertCasts", 209485, 209477, 209410, 209404, 209033, 216110, 216096, 216000, 216006)
 	self:Log("SPELL_CAST_START", "ChargingStation", 225100)
@@ -342,6 +366,7 @@ function mod:OnBossEnable()
 	self:RegisterMessage("BigWigs_BossComm")
 	self:RegisterMessage("DBM_AddonMessage") -- Catch DBM clues
 	self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+	
 	self:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "Truthseeker", "player")
 	
 	self:Log("SPELL_DAMAGE", "PullDmg", "*")
@@ -354,6 +379,8 @@ function mod:OnBossEnable()
 	self:Death("DeathsId", 105699, 104275, 104274, 105715, 104273, 104278, 104300, 107435)
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", "ResetmobListActive")
 	self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+	
+	self:RegisterEvent("CHAT_MSG_SYSTEM")
 
 	
 	
@@ -372,150 +399,112 @@ end
 --------------------------------------------------------------------------------
 -- Event Handlers
 --
-mobList = {
-["105699"] = true,
-["104270"] = true,
-["104275"] = true,
-["104274"] = true,
-["105715"] = true,
-["104273"] = true,
-["104278"] = true,
-["104300"] = true,
-["107435"] = true,
+
+
+local mobList = {
+    ["105699"] = { cdBar = 209516, cdBarDuration = 8.2, castBar = 16.4 },
+    ["104270"] = { cdBar = 225100, cdBarDuration = 7.5 },
+    ["104275"] = { cdBar = 209378, cdBarDuration = 7.7 },
+    ["104274"] = { cdBar = 207980, cdBarDuration = 7.7 },
+    ["105715"] = { cdBar = 212784, cdBarDuration = 9 },
+    ["104273"] = { cdBar = 207979, cdBarDuration = 8.3 },
+    ["104278"] = { cdBar = 211464, cdBarDuration = 7.7 },
+    ["104300"] = { cdBar = 211470, cdBarDuration = 7.7 },
+    ["107435"] = { cdBars = { 214692, 214688, 214690 }, cdBarDurations = { 14, 2, 8 } }
 }
 
-mobListActive = {}
+local mobListActive = {}
 
-do
-	function mod:CheckPull(event, unit, guid)
-		if not UnitGUID(unit) then return end
-		local guid = UnitGUID(unit)
-		local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
-		local mobId = self:MobId(guid)
-		local unitid = select(6,strsplit("-",guid))
-		if mobList[unitid] and not mobListActive[unitid] then
-			 if UnitExists(unit) and UnitAffectingCombat(unit) and UnitCanAttack("player", unit) and hp > 90 then
-				if mobId == 105699 then
-					self:CDBar(209516, 8.2)
-					self:CastBar(209516, 16.4)
-				elseif mobId == 104270 then
-					self:CDBar(225100, 7.5)
-				elseif mobId == 104275 then
-					self:CDBar(209378, 7.7)
-				elseif mobId == 104274 then
-					self:CDBar(207980, 7.7)
-				elseif mobId == 105715 then
-					self:CDBar(212784, 9)
-					self:CastBar(212784, 34)
-				elseif mobId == 104273 then
-					self:CDBar(207979, 8.3)
-				elseif mobId == 104278 then
-					self:CDBar(211464, 7.7)
-				elseif mobId == 104300 then
-					self:CDBar(211470, 7.7)
-				elseif mobId == 107435 then
-					self:CDBar(214692, 14)
-					self:CDBar(214688, 2)
-					self:CDBar(214690, 8)
+local function handleMobData(mod, mobData)
+    if mobData.cdBars then
+        for i, cdBar in ipairs(mobData.cdBars) do
+            mod:CDBar(cdBar, mobData.cdBarDurations[i])
+        end
+    else
+        mod:CDBar(mobData.cdBar, mobData.cdBarDuration)
+        if mobData.castBar then
+            mod:CastBar(mobData.cdBar, mobData.castBar)
+        end
+    end
+end
+
+function mod:CheckPull(event, unit)
+	if not unit then return end
+	local guid = UnitGUID(unit)
+    local unitid = select(6, strsplit("-", guid))
+    local mobData = mobList[unitid]
+    local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
+
+    if mobData and not mobListActive[unitid] and UnitExists(unit) and UnitAffectingCombat(unit) 
+       and UnitCanAttack("player", unit) and hp > 90 then
+       
+        handleMobData(self, mobData)
+        mobListActive[unitid] = true
+    end
+end
+
+function mod:PullDmg(args)
+    local mobId = self:MobId(args.destGUID) or self:MobId(args.sourceGUID)
+    local unitid = tostring(mobId)
+    local mobData = mobList[unitid]
+
+    if mobData and not mobListActive[unitid] then
+        handleMobData(self, mobData)
+        mobListActive[unitid] = true
+    end
+end
+
+function mod:DeathsId(args)
+    local guid = args.destGUID
+    local unitid = select(6, strsplit("-", guid))
+    local mobData = mobList[self:MobId(guid)]
+    
+    if mobData then
+        if mobData.cdBars then
+            for _, cdBar in ipairs(mobData.cdBars) do
+                self:StopBar(cdBar)
+            end
+        else
+            self:StopBar(mobData.cdBar)
+        end
+        
+        mobListActive[unitid] = false
+    end
+end
+
+local checkincombat = nil
+function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
+    if select(2, ...) == "UNIT_DIED" then
+        self:CancelTimer(checkincombat)
+        checkincombat = self:ScheduleTimer("ResetmobListActive", 1)
+    end
+end
+
+function mod:ResetmobListActive()
+	local incombat = false
+	local units = {"player", "party1", "party2", "party3", "party4", "raid1", "raid2", "raid3", "raid4", "raid5"}
+
+	for _, unit in ipairs(units) do
+		if UnitAffectingCombat(unit) then
+			incombat = true
+			break
+		end
+	end
+
+	if not incombat then
+		for unitid, mobData in pairs(mobList) do
+			if mobData.cdBars then
+				for _, cdBar in ipairs(mobData.cdBars) do
+					self:StopBar(cdBar)
 				end
-				mobListActive[unitid] = true
+			elseif mobData.cdBar then
+				self:StopBar(mobData.cdBar)
 			end
 		end
-	end
-	
-	function mod:PullDmg(args)
-		if (self:MobId(args.destGUID) == 105699 or self:MobId(args.sourceGUID) == 105699) and not mobListActive["105699"] then
-			self:CDBar(209516, 8.2)
-			self:CastBar(209516, 16.4)
-			mobListActive["105699"] = true
-		elseif (self:MobId(args.destGUID) == 104270 or self:MobId(args.sourceGUID) == 104270) and not mobListActive["104270"] then
-			self:CDBar(225100, 7.5)
-			mobListActive["104270"] = true
-		elseif (self:MobId(args.destGUID) == 104275 or self:MobId(args.sourceGUID) == 104275) and not mobListActive["104275"] then
-			self:CDBar(209378, 7.7)
-			mobListActive["104275"] = true
-		elseif (self:MobId(args.destGUID) == 104274 or self:MobId(args.sourceGUID) == 104274) and not mobListActive["104274"] then
-			self:CDBar(207980, 7.7)
-			mobListActive["104274"] = true
-		elseif (self:MobId(args.destGUID) == 105715 or self:MobId(args.sourceGUID) == 105715) and not mobListActive["105715"] then
-			self:CDBar(212784, 9)
-			self:CastBar(212784, 34)
-			mobListActive["105715"] = true
-		elseif (self:MobId(args.destGUID) == 104273 or self:MobId(args.sourceGUID) == 104273) and not mobListActive["104273"] then
-			self:CDBar(207979, 8.3)
-			mobListActive["104273"] = true
-		elseif (self:MobId(args.destGUID) == 104278 or self:MobId(args.sourceGUID) == 104278) and not mobListActive["104278"] then
-			self:CDBar(211464, 7.7)
-			mobListActive["104278"] = true
-		elseif (self:MobId(args.destGUID) == 104300 or self:MobId(args.sourceGUID) == 104300) and not mobListActive["104300"] then
-			self:CDBar(211470, 7.7)
-			mobListActive["104300"] = true
-		elseif (self:MobId(args.destGUID) == 107435 or self:MobId(args.sourceGUID) == 107435) and not mobListActive["107435"] then
-			self:CDBar(214692, 14)
-			self:CDBar(214688, 2)
-			self:CDBar(214690, 8)
-			mobListActive["107435"] = true
-		end
-	end
-	
-	function mod:DeathsId(args)
-		local guid = args.destGUID
-		local mobId = self:MobId(guid)
-		local unitid = select(6,strsplit("-",guid))
-		if mobId == 105699 then
-			mobListActive[unitid] = false
-		elseif mobId == 104270 then
-			self:StopBar(225100)
-			mobListActive[unitid] = false
-		elseif mobId == 104275 then
-			self:StopBar(209378)
-			mobListActive[unitid] = false
-		elseif mobId == 104274 then
-			self:StopBar(207980)
-			mobListActive[unitid] = false
-		elseif mobId == 105715 then
-			mobListActive[unitid] = false
-		elseif mobId == 104273 then
-			self:StopBar(207979)
-			mobListActive[unitid] = false
-		elseif mobId == 104278 then
-			self:StopBar(211464)
-			mobListActive[unitid] = false
-		elseif mobId == 104300 then
-			mobListActive[unitid] = false
-		elseif mobId == 107435 then
-			self:StopBar(214692)
-			self:StopBar(214688)
-			self:StopBar(214690)
-			mobListActive[unitid] = false
-		end
-	end
-	
-	local CheckInCombat = 0
-	function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
-		if select(2,...) == "UNIT_DIED" then
-			if CheckInCombat == 0 then
-				CheckInCombat = self:ScheduleTimer("ResetmobListActive", 1)
-			end
-		end
-	end
-	
-	function mod:ResetmobListActive()
-		if not UnitAffectingCombat("player") and not UnitAffectingCombat("party1") and not UnitAffectingCombat("party2") and not UnitAffectingCombat("party3") and not UnitAffectingCombat("party4") and not UnitAffectingCombat("raid1") and not UnitAffectingCombat("raid2") and not UnitAffectingCombat("raid3") and not UnitAffectingCombat("raid4") and not UnitAffectingCombat("raid5") then
-			self:StopBar(CL.cast:format(self:SpellName(209516)))
-			self:StopBar(CL.cast:format(self:SpellName(212784)))
-			self:StopBar(225100)
-			self:StopBar(211470)
-			self:StopBar(212784)
-			self:StopBar(209516)
-			self:StopBar(209378)
-			self:StopBar(207980)
-			self:StopBar(207979)
-			self:StopBar(211464)
-			self:StopBar(214692)
-			self:StopBar(214688)
-			self:StopBar(214690)
-			wipe(mobListActive)
+		wipe(mobListActive)
+		for i = 1, 8 do
+			self:StopBar(CL.count:format(self:SpellName(212784), i))
+			self:StopBar(CL.other:format(self:SpellName(212784), mark["{rt" .. i .. "}"]))
 		end
 	end
 end
@@ -802,12 +791,15 @@ do
 		if msg:find(L.spyFoundPattern) and self:GetOption("spy_helper") > 0 then
 			self:Message("spy_helper", "Positive", "Info", L.spyFound:format(self:ColorName(target)), false)
 			self:CloseInfo("spy_helper")
+			self:UnregisterEvent("PLAYER_TARGET_CHANGED")
 			if target == self:UnitName("player") then
 				sendChatMessage(L.spyFoundChat, englishSpyFound ~= L.spyFoundChat and englishSpyFound)
-				SetRaidTarget("target", 8)
+				if GetRaidTargetIndex("target") ~= 8 then
+					SetRaidTarget("target", 8)
+				end
 			else
 				for unit in self:IterateGroup() do
-					if UnitName(unit) == target then -- Normal UnitName since CHAT_MSG_MONSTER_SAY doesn't append servers to names
+					if UnitName(unit) == target and GetRaidTargetIndex(unit.."target") ~= 8 then -- Normal UnitName since CHAT_MSG_MONSTER_SAY doesn't append servers to names
 						SetRaidTarget(unit.."target", 8)
 						break
 					end
@@ -816,10 +808,36 @@ do
 		end
 	end
 
+	local dontsend = 0
+	local function CheckWhoNotInInstance()
+		local count = 0
+		local group = UnitInRaid("player") and "raid" or UnitInParty("player") and "party"
+		local members = GetNumGroupMembers()
+		for i = 1, members, 1 do
+			local member = group..tostring(i)
+			local dungeon = select(4,UnitPosition(member))
+			if (dungeon == 1571) == true then
+				count = count + 1
+			end
+		end
+		if dontsend == 0 and not UnitInRaid("player") and GetNumGroupMembers() - 1 - count > 0 then
+			sendChatMessage(L.Room)
+			dontsend = 1
+		elseif dontsend == 0 and UnitInRaid("player") and GetNumGroupMembers() - count > 0 then
+			sendChatMessage(L.Room)
+			dontsend = 1
+		end
+	end
+
 	function mod:Truthseeker(_, _, _, _, spellId)
 		if spellId == 215854 then
 			sendChatMessage(CL.spawned:format(self:SpellName(215854)))
 			mod:Sync("Truthseeker")
+		elseif spellId == 213514 and UnitIsGroupLeader("player") and not self:Tank() then
+			CheckWhoNotInInstance()
+			mod:Sync("RLannounce")
+		elseif spellId == 213514 and self:Tank() then
+			CheckWho = self:ScheduleTimer(CheckWhoNotInInstance, 0.5)
 		end
 	end
 	
@@ -1008,44 +1026,101 @@ do
 		end
 	end
 
-	local prevTable, usableTimer, lastProfessionUpdate = {}, nil, 0
+	local prevTableT, usableTimerT, lastProfessionUpdateT = {}, nil, 0
 	local function usableFoundtarget(self, id, item)
 		if buffs[id] and self:UnitBuff("player", self:SpellName(buffs[id])) then -- there's no point in showing a message if we already have the buff
 			return
 		end
 
 		local t = GetTime()
-		if t-(prevTable[id] or 0) > 0.5 then
-			prevTable[id] = t
+		if t-(prevTableT[id] or 0) > 0.5 then
+			prevTableT[id] = t
 
 			local delayAnnouncement = false
 			if item.professions then
-				if t-lastProfessionUpdate > 0.5 then
-					lastProfessionUpdate = t
+				if t-lastProfessionUpdateT > 0.5 then
+					lastProfessionUpdateT = t
 					self:Sync("getProfessions")
 					delayAnnouncement = true
 				end
 			end
 			if delayAnnouncement then
-				usableTimer = self:ScheduleTimer(announceUsabletarget, 0.3, self, id, item)
+				usableTimerT = self:ScheduleTimer(announceUsabletarget, 0.3, self, id, item)
 			else
 				announceUsabletarget(self, id, item)
 			end
 		end
 	end
 	
+	local MobSpy = 0
+	local spylist = {}
+
+	local function SetTargetRaidIcon(unit)
+		if not GetRaidTargetIndex(unit) then
+			SetRaidTarget(unit, 8)
+		end
+	end
+
+	local function CheckTargets()
+		local playerTargetGUID = UnitGUID("target")
+		if playerTargetGUID == MobSpy then
+			SetTargetRaidIcon("target")
+		end
+
+		local numGroupMembers = GetNumGroupMembers()
+		for i = 1, numGroupMembers do
+			local unit = (UnitInRaid("player") and "raid" .. i) or (UnitInParty("player") and "party" .. i)
+			if UnitExists(unit) then
+				local targetGUID = UnitGUID(unit .. "target")
+				if targetGUID == MobSpy then
+					SetTargetRaidIcon(unit .. "target")
+				end
+			end
+		end
+	end
+	
+	 function mod:CHAT_MSG_SYSTEM(event, ...)
+       local msg = ...
+       local guid = UnitGUID("target")
+       if string.find(msg, '227258') and guid ~= MobSpy then
+           self:Sync("targetspy", guid)
+           self:CDBar("stages", 5, CL.other:format("CD", "Scan"), "Inv_misc_spyglass_02")
+       elseif string.find(msg, 'NPC has 0 auras') or (string.find(msg, 'NPC has 1 auras') and GetDungeonDifficultyID() == 8) then
+           self:Sync("targetnotspy", guid)
+           self:CDBar("stages", 5, CL.other:format("CD", "Scan"), "Inv_misc_spyglass_02")
+      end
+	end
+	
 	function mod:resettargets()
 		counttargets = 0
 	end
 	
+	local Checktarget = nil
 	function mod:PLAYER_TARGET_CHANGED()
 		local id = self:MobId(UnitGUID("target"))
 		local item = buffItems[id] or guardItems[id]
 		if item and self:GetOption("custom_on_announcement") then
 			counttargets = counttargets + 1
 			self:ScheduleTimer(usableFoundtarget, 0.3, self, id, item)
-			self:ScheduleTimer("resettargets", 0.5)
+			self:ScheduleTimer("resettargets", 1)
 		end
+		
+        if id == 107435 and not UnitCanAttack("player", "target") and self:GetOption("custom_on_spyscan") then
+			local targetGUID = UnitGUID("target")
+            if not spylist[targetGUID] and targetGUID ~= MobSpy then
+				spamscan = true
+				self:ScheduleTimer("spamfilter", 0.5)
+                SendChatMessage("_scan", "GUILD")
+                self:CancelTimer(Checktarget)
+                Checktarget = self:ScheduleTimer("PLAYER_TARGET_CHANGED", 0.1)
+            elseif spylist[targetGUID] then
+                self:Message("spy_helper", "Positive", "Long", L.provenspy, false)
+            elseif targetGUID == MobSpy then
+                self:Message("spy_helper", "Positive", "Info", L.spyFoundChat, false)
+                SendChatMessage(L.spyNoticedChat, IsInGroup(2) and "INSTANCE_CHAT" or "PARTY")
+				self:Sync("recheckmarks")
+            end
+        end
 	end
 
 	function mod:BigWigs_BossComm(_, msg, data, sender)
@@ -1089,6 +1164,18 @@ do
 			end
 		elseif msg == "Truthseeker" then
 			self:Message(215854, "Positive", "Info", CL.on:format(self:SpellName(215854), self:ColorName(sender)))
+		elseif msg == "RLannounce" then
+			dontsend = 1
+		elseif msg == "targetspy" then
+            MobSpy = data
+            self:ScheduleTimer(CheckTargets, 0.1)         
+            if sender ~= self:UnitName("player") then
+                self:Message("spy_helper", "Positive", "Info", L.spyNoticed:format(self:ColorName(sender)), false)
+            end
+        elseif msg == "targetnotspy" then
+            spylist[data] = true
+		elseif msg == "recheckmarks" then
+            self:ScheduleTimer(CheckTargets, 0.1) 
 		end
 	end
 end
@@ -1183,8 +1270,19 @@ end
 
 function mod:EyeStorm(args)
 	self:Message(args.spellId, "Attention", "Long")
-	self:CDBar(args.spellId, 25)
-	self:CastBar(args.spellId, 50)
+	
+    local unit = self:GetUnitIdByGUID(args.sourceGUID)
+    local raidIndex = unit and GetRaidTargetIndex(unit)
+    if raidIndex and raidIndex > 0 then
+        self:CDBar(212784, 25, CL.other:format(self:SpellName(212784), mark["{rt" .. raidIndex .. "}"]), 212784)
+		return
+    end
+    for i = 1, 8 do
+        if self:BarTimeLeft(CL.count:format(self:SpellName(212784), i)) < 1 then
+            self:Bar(212784, 25, CL.count:format(self:SpellName(212784), i))
+            break
+        end
+    end	
 end
 
 function mod:Shockwave(args)
@@ -1258,6 +1356,8 @@ end
 
 function mod:Boat(args)
 	if self:Me(args.sourceGUID) then
+		self:RegisterEvent("PLAYER_TARGET_CHANGED")
+		self:Sync("getProfessions")
 		self:Message("stages", "Neutral", "Long", CL.incoming:format(self:SpellName(75912)), 75912)
 		self:Bar("stages", 36.8, self:SpellName(75912), 75912)
 		self:ScheduleTimer("Boattimer", 36.8)
@@ -1266,4 +1366,14 @@ end
 
 function mod:Boattimer()
 	self:Message("stages", "Neutral", "Long", CL.over:format(self:SpellName(234722)), 75912)
+end
+
+function Filter_System(self, event, ...)
+local msg = ...
+if ((string.find(msg, 'NPC has') or string.find(msg, 'Their auras') or string.find(msg, 'id:')) and spamscan) then return true, ... else return false, ... end
+end
+ChatFrame_AddMessageEventFilter('CHAT_MSG_SYSTEM', Filter_System)
+
+function mod:spamfilter()
+	spamscan = false
 end

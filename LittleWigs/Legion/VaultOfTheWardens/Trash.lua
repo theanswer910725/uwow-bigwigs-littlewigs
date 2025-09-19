@@ -17,6 +17,16 @@ mod:RegisterEnableMob(
 	102566 -- Grimhorn the Enslaver
 )
 
+local mark = {
+  ["{rt1}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1:0|t",
+  ["{rt2}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_2:0|t",
+  ["{rt3}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_3:0|t",
+  ["{rt4}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_4:0|t",
+  ["{rt5}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_5:0|t",
+  ["{rt6}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_6:0|t",
+  ["{rt7}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7:0|t",
+  ["{rt8}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8:0|t"
+}
 --------------------------------------------------------------------------------
 -- Locals
 --
@@ -248,17 +258,23 @@ end
 
 --[[ Fel-Infused Fury ]]--
 
-do
-	local prev = 0
-	function mod:UnleashFury(args)
-		local t = GetTime()
-		if t-prev > 27 then
-			prev = t
-			self:CDBar(196799, 30)
-		end
-		self:Message(args.spellId, "Attention", "Alarm", CL.casting:format(args.spellName))
-		if self:Interrupter(args.sourceGUID) then
-			self:Flash(args.spellId)
+
+function mod:UnleashFury(args)
+	self:Message(args.spellId, "Attention", "Alarm", CL.casting:format(args.spellName))
+	if self:Interrupter(args.sourceGUID) then
+		self:Flash(args.spellId)
+	end
+	
+	local unit = self:GetUnitIdByGUID(args.sourceGUID)
+	local raidIndex = unit and GetRaidTargetIndex(unit)
+	if raidIndex and raidIndex > 0 then
+		self:CDBar(196799, 30, CL.other:format(self:SpellName(196799), mark["{rt" .. raidIndex .. "}"]), 196799)
+		return
+	end
+	for i = 1, 8 do
+		if self:BarTimeLeft(CL.count:format(self:SpellName(196799), i)) < 1 then
+			self:Bar(196799, 30, CL.count:format(self:SpellName(196799), i))
+			break
 		end
 	end
 end

@@ -4,6 +4,18 @@ if L then
 	L.energyStatus = "小水滴到达枯木：%d%% 能量"
 end
 
+local L = BigWigs:NewBossLocale("Ancient Protectors", "zhCN")
+if not L then return end
+if L then
+	L.custom_off_always_show_casts = "始终为|cff71d5ff自然之怒|r/|cff71d5ff水箭术|r显示目标"
+end
+
+local L = BigWigs:NewBossLocale("Yalnu", "zhCN")
+if not L then return end
+if L then
+	L.mobname = "凶猛鞭笞者"
+end
+
 L = BigWigs:NewBossLocale("The Everbloom Trash", "zhCN")
 if L then
 	L.dreadpetal = "恐瓣"
@@ -20,12 +32,6 @@ if L then
 
 	L.gate_open_desc = "显示下级法师克萨伦何时打开通往雅努大门的计时条。"
 	L.yalnu_warmup_trigger = "传送门失守了！我们必须在这头野兽逃跑前阻止它！"
-end
-
-local L = BigWigs:NewBossLocale("Ancient Protectors", "zhCN")
-if not L then return end
-if L then
-	L.custom_off_always_show_casts = "始终显示 |cff71d5ff自然之怒|r/|cff71d5ff水箭|r 的目标。"
 end
 
 L = BigWigs:NewBossLocale("=> AutoMarks <=            ", "zhCN")

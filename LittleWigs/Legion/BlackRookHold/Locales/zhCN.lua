@@ -44,4 +44,5 @@ if L then
 	L.custom_off_Mob4 = "魔怨支配者"
 	L.custom_off_Mob5 = "愤怒卫士剑圣"
 	L.custom_off_Mob6 = "幽灵顾问"
+	L.custom_off_Mob7 = "失魂的勇士"
 end

@@ -44,4 +44,5 @@ if L then
 	L.custom_off_Mob4 = "Злобный покоритель скверны"
 	L.custom_off_Mob5 = "Страж гнева - мастер клинка"
 	L.custom_off_Mob6 = "Фантомный советник"
+	L.custom_off_Mob7 = "Лишенный души защитник"
 end

@@ -1,13 +1,14 @@
 local L = BigWigs:NewBossLocale("Court of Stars Trash", "zhCN")
 if not L then return end
 if L then
+	L.Gerenth = "暗影箭雨"
 	L.Guard = "暮色卫队卫兵"
 	L.Construct = "构造体卫兵"
 	L.Enforcer = "邪缚执行者"
 	L.Hound = "军团猎犬"
 	L.Mistress = "暗影女妖"
 	L.Gerenth = "邪恶的格伦斯"
-	L.ManaSaber = "魔刃豹"
+	L.ManaSaber = "Манапард"
 	L.Jazshariu = "加兹沙尤"
 	L.Imacutya = "依玛库塔"
 	L.Baalgar = "警惕的巴尔戈"
@@ -23,23 +24,28 @@ if L then
 	L.ArcaneKeys = "魔法钥匙"
 	L.clues = "线索"
 
-	L.InfernalTome = "地狱火宝典： -10% 减伤 "
-	L.MagicalLantern = "魔法灯笼： +10% 增伤"
-	L.NightshadeRefreshments = "夜影小食： +25% 最大生命值"
-	L.StarlightRoseBrew = "星光玫瑰茶： 回血回蓝"
-	L.UmbralBloom = "深黯之花: +10% 急速"
-	L.WaterloggedScroll = "浸水的卷轴： +30% 移速"
+	L.InfernalTome = "地狱火宝典"
+	L.MagicalLantern = "魔法灯笼"
+	L.NightshadeRefreshments = "夜影小食"
+	L.StarlightRoseBrew = "星光玫瑰茶"
+	L.UmbralBloom = "深黯之花"
+	L.WaterloggedScroll = "浸水的卷轴"
 	L.BazaarGoods = "集市货物"
 	L.LifesizedNightborneStatue = "夜之子等身雕像"
 	L.DiscardedJunk = "丢弃的垃圾"
 	L.WoundedNightborneCivilian = "受伤的夜之子平民"
 	L.Felorb = "邪能宝珠"
-	L.FelOrb = "邪能宝珠： +10% 暴击"
 	L.ArcanePowerConduit = "奥术能量导管"
 	L.FlaskoftheSolemnNight = "庄严静夜合剂"
+	L.Room = "房间已激活"
 
-	L.custom_on_announcement = "Анонс всех бафов (используйте макрос после лодки)"
-	L.custom_on_announcement_desc = "/ц Настой /ц Проводник /ц Выброшенный /ц Раненый /ц Рыночные /ц Статуя /ц Сфера /ц Инфернальный /ц Магический /ц Закуски /ц Отвар /ц Теневой /ц Промок"
+	L.custom_on_announcement = "通告所有增益物品（下船后使用宏命令）"
+	L.custom_on_announcement_desc = "/目标 奥术能量导管 /目标 丢弃的垃圾 /目标 邪能宝珠 /目标 地狱火宝典 /目标 魔法灯笼 /目标 夜影小食 /目标 星光玫瑰茶 /目标 深黯之花 /目标 浸水的卷轴 /目标 集市货物 /目标 夜之子等身雕像 /目标 丢弃的杂物 /目标 受伤的夜之子平民"
+
+
+	L.custom_on_spyscan = "间谍扫描器"
+	L.custom_on_spyscan_desc = "当你选中间谍并以其为目标时，使用服务器命令 _scan 对其进行扫描并报告结果。"
+	L.custom_on_spyscan_icon = 213213
 
 	L.announce_buff_items = "通报增益物品"
 	L.announce_buff_items_desc = "通报此地下城所有可用的增益物品，并通报谁可以使用。"
@@ -50,11 +56,17 @@ if L then
 	L.custom_on_use_buff_items = "立即使用增益物品"
 	L.custom_on_use_buff_items_desc = "启用此选项后，自动确认使用物品前的对话选项并使用物品，这不包含二号首领前使用会引来守卫的物品。"
 
+
+
 	L.spy_helper = "密探事件助手"
 	L.spy_helper_desc = "在一个信息窗口显示队伍得到密探线索，并通报线索给其他队员。"
 
 	L.clueFound = "找到第%d/5条线索：|cffffffff%s|r"
 	L.spyFound = "间谍被%s找到了！"
+	L.spyNoticed = "Игрок %s кое-что замечает!"
+	L.spyNoticedChat = "[LittleWigs] Вижу шпиона !"
+	L.provenspy = "|cffff0000Это не шпион!|r |cff69ccf0Выберите следующую цель.|r"
+	
 	L.spyFoundChat = "间谍已找到，快来！"
 	L.spyFoundPattern = "喂喂，别急着下结论" -- Now now, let's not be hasty [player]. Why don't you follow me so we can talk about this in a more private setting...
 
@@ -157,8 +169,7 @@ end
 L = BigWigs:NewBossLocale("Advisor Melandrus", "zhCN")
 if L then
 	L.warmup_trigger = "显然你又失败了，麦兰杜斯。我给你一个机会。干掉这些外来者，我得回暗夜要塞了。"
-	-- TODO 顾问麦兰杜斯 
-	L.warmup_trigger2 = "大魔导师，您这么快就要离开了吗？"
+	L.warmup_trigger2 = "这么快就要走了吗，大魔导师？"
 end
 
 L = BigWigs:NewBossLocale("=> AutoMarks <=          ", "zhCN")
@@ -167,13 +178,11 @@ if L then
 	L.custom_on_Allowmarks_desc = "用 {rt1}{rt2}{rt3}{rt4}{rt5}{rt6}{rt7} 标记小怪，你需要是助理或领袖"
 	L.custom_off_RequireLead = "仅由我（领袖）操作"
 	L.custom_off_CombatMarking  = "仅标记战斗中的小怪"
-	
 	L.Choose = "请选择需要标记的小怪"
-	
-	L.custom_off_Mob1 = "警惕的暮色卫队卫兵"
-	L.custom_off_Mob2 = "暮色卫队哨兵"
-	L.custom_off_Mob3 = "魔刃豹"
-	L.custom_off_Mob4 = "构造体卫兵"
-	L.custom_off_Mob5 = "邪缚执行者"
-	L.custom_off_Mob6 = "警觉的审判者"
+	L.custom_off_Mob1 = "Бдительный часовой из сумеречной стражи"
+	L.custom_off_Mob2 = "Часовой из сумеречной стражи"
+	L.custom_off_Mob3 = "Манапард"
+	L.custom_off_Mob4 = "Голем-страж"
+	L.custom_off_Mob5 = "Порабощенная скверной карательница"
+	L.custom_off_Mob6 = "Бдительный инквизитор"
 end

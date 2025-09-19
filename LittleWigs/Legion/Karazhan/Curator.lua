@@ -58,6 +58,13 @@ end
 --------------------------------------------------------------------------------
 -- Event Handlers
 --
+function mod:PowerDischarge()
+	if self:BarTimeLeft(227254) > 14 then
+		self:CDBar(227279, 14) -- Power Discharge
+		self:ScheduleTimer("PowerDischarge", 14)
+	end
+	self:Message(227279, "Urgent", "Alert")
+end
 function mod:ArcLightningApplied(args)
 	local amount = args.amount
 	if amount % 3 == 0 then
@@ -109,6 +116,8 @@ function mod:ImageDeath(args)
 end
 
 function mod:EvocationOver(args)
+	self:CDBar(227279, 13) -- Power Discharge
+	self:ScheduleTimer("PowerDischarge", 13)
 	self:Message(args.spellId, "Neutral", "Info", CL.over:format(args.spellName))
 	self:CDBar(args.spellId, 53)
 	self:Bar(227267, 6)

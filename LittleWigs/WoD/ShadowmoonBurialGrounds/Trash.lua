@@ -30,6 +30,16 @@ local ExhumedSpirit = false
 local MonstrousCorpseSpider = false
 local CarrionWorm = false
 
+local mark = {
+  ["{rt1}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1:0|t",
+  ["{rt2}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_2:0|t",
+  ["{rt3}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_3:0|t",
+  ["{rt4}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_4:0|t",
+  ["{rt5}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_5:0|t",
+  ["{rt6}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_6:0|t",
+  ["{rt7}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7:0|t",
+  ["{rt8}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8:0|t"
+}
 --------------------------------------------------------------------------------
 -- Localization
 --
@@ -60,6 +70,7 @@ function mod:GetOptions()
 		-- Reanimated Ritual Bones
 		{164907, "TANK_HEALER"}, -- Void Slash
 		-- Void Spawn
+		"warmup",
 		152964, -- Void Pulse
 		394512, -- Void Eruptions
 		-- Shaodwmoon Loyalist
@@ -138,6 +149,7 @@ function mod:OnBossEnable()
 	self:RegisterEvent("UNIT_THREAT_LIST_UPDATE", "ForPull")
 	self:RegisterEvent("UNIT_HEALTH_FREQUENT", "ForPull")
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", "WipeTimer")
+	self:RegisterEvent("UNIT_FACTION")
 end
 
 --------------------------------------------------------------------------------
@@ -193,6 +205,7 @@ do
 	}
 	function mod:ForPull(event, unit, unitTarget, guid)
 		if IsInInstance() then
+			if not unit then return end
 			local InCombat = UnitAffectingCombat(unit)
 			local exists = UnitExists(unit)
 			local canAttack = UnitCanAttack("player", unit)
@@ -268,6 +281,15 @@ do
 				self:StopBar(CL.cast:format(self:SpellName(153395)))
 				self:StopBar(398206)
 				self:StopBar(CL.cast:format(self:SpellName(398206)))
+				
+				for i = 1, 8 do
+				self:StopBar(CL.count:format(self:SpellName(156776), i))
+				self:StopBar(CL.count:format(self:SpellName(398150), i))
+				self:StopBar(CL.count:format(self:SpellName(156718), i))
+				self:StopBar(CL.other:format(self:SpellName(156776), mark["{rt" .. i .. "}"]))
+				self:StopBar(CL.other:format(self:SpellName(398150), mark["{rt" .. i .. "}"]))
+				self:StopBar(CL.other:format(self:SpellName(156718), mark["{rt" .. i .. "}"]))
+				end
 			end
 		end
 	end
@@ -363,16 +385,24 @@ end
 
 function mod:Domination(args)
 	self:Message(args.spellId, "Important", "Alarm", CL.casting:format(args.spellName))
-	if self:BarTimeLeft(args.spellId) < 3 and self:BarTimeLeft(156776) < 3 and self:BarTimeLeft(CL.count:format(self:SpellName(156776), 2)) < 14 then
-		self:CDBar(args.spellId, 20)
-		self:CDBar(156776, 3)
-		self:Bar(156776, 14, CL.count:format(self:SpellName(156776), 2))
-	elseif self:BarTimeLeft(args.spellId) < 3 and self:BarTimeLeft(156776) < 3 then
-		self:CDBar(args.spellId, 20)
-		self:CDBar(156776, 3)
-	elseif self:BarTimeLeft(args.spellId) < 3 then
-		self:CDBar(args.spellId, 20)	
+	if self:BarTimeLeft(398150) < 2 then
+		self:CDBar(398150, 20)
 	end
+	
+	local unit = self:GetUnitIdByGUID(args.sourceGUID)
+    local raidIndex = unit and GetRaidTargetIndex(unit)
+    if raidIndex and raidIndex > 0 then
+		self:CDBar(156776, 3, CL.other:format(self:SpellName(156776), mark["{rt" .. raidIndex .. "}"]), 156776)
+		self:ScheduleTimer("CDBar", 3, 156776, 14, CL.other:format(self:SpellName(156776), mark["{rt" .. raidIndex .. "}"]), 156776)
+		return
+    end
+    for i = 1, 8 do
+        if self:BarTimeLeft(CL.count:format(self:SpellName(156776), i)) < 3 then
+			self:Bar(156776, 3, CL.count:format(self:SpellName(156776), i))
+			self:ScheduleTimer("CDBar", 3, 156776, 14, CL.count:format(self:SpellName(156776), i))
+            break
+        end
+    end
 end
 
 function mod:DominationApplied(args)
@@ -395,13 +425,20 @@ do
 		end
 	end
 	function mod:RendingVoidlash(args)
-		self:GetUnitTarget(printTarget, 0.3, args.sourceGUID)
-		if self:BarTimeLeft(156776) < 3 and self:BarTimeLeft(CL.count:format(self:SpellName(156776), 2)) < 14 then
-			self:CDBar(args.spellId, self:BarTimeLeft(CL.count:format(self:SpellName(156776), 2)))
-			self:Bar(156776, 20, CL.count:format(self:SpellName(156776), 2))
-		elseif self:BarTimeLeft(156776) < 3 then
-			self:Bar(156776, 10)
+		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
+		
+	    local unit = self:GetUnitIdByGUID(args.sourceGUID)
+		local raidIndex = unit and GetRaidTargetIndex(unit)
+		if raidIndex and raidIndex > 0 then
+			self:CDBar(156776, 10, CL.other:format(self:SpellName(156776), mark["{rt" .. raidIndex .. "}"]), 156776)
+			return
 		end
+		for i = 1, 8 do
+			if self:BarTimeLeft(CL.count:format(self:SpellName(156776), i)) < 1 then
+				self:Bar(156776, 10, CL.count:format(self:SpellName(156776), i))
+				break
+			end
+		end		
 	end
 end
 
@@ -436,7 +473,7 @@ do
 	end
 	function mod:DeathBlast(args)
 		local t = GetTime()
-		self:GetUnitTarget(printTarget, 0.3, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
 		if self:BarTimeLeft(args.spellId) < 2 then
 			self:CDBar(args.spellId, 9)
 		end
@@ -449,18 +486,22 @@ end
 
 -- Monstrous Corpse Spider
 
-do
-	local prev = 0
-	function mod:NecroticBurst(args)
-		local t = GetTime()
-		if self:BarTimeLeft(args.spellId) < 2 then
-			self:CDBar(args.spellId, 20.5)
-		end
-		if t - prev > 1 then
-			prev = t
-			self:Message(args.spellId, "Urgent", "Warning", CL.casting:format(args.spellName))
-		end
-	end
+
+function mod:NecroticBurst(args)
+	self:Message(args.spellId, "Urgent", "Warning", CL.casting:format(args.spellName))
+	
+	local unit = self:GetUnitIdByGUID(args.sourceGUID)
+    local raidIndex = unit and GetRaidTargetIndex(unit)
+    if raidIndex and raidIndex > 0 then
+        self:CDBar(156718, 20.5, CL.other:format(self:SpellName(156718), mark["{rt" .. raidIndex .. "}"]), 156718)
+		return
+    end
+    for i = 1, 8 do
+        if self:BarTimeLeft(CL.count:format(self:SpellName(156718), i)) < 1 then
+            self:Bar(156718, 20.5, CL.count:format(self:SpellName(156718), i))
+            break
+        end
+    end
 end
 
 -- Carrion Worm
@@ -472,10 +513,32 @@ do
 		end
 	end
 	function mod:BodySlam(args)
-		self:GetUnitTarget(printTarget, 0.3, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
 		self:Message(args.spellId, "Important", "Alarm")
 		if self:BarTimeLeft(args.spellId) < 2 then
 			self:CDBar(args.spellId, 15.7)
 		end
 	end
 end
+
+-----------------------------------------------------------------
+
+local lastMobActiveTime = 0
+local checkInterval = 1
+
+function mod:mobactive()
+    self:Message("warmup", "Neutral", "Long", CL.other:format(CL.big_add, self:SpellName(155524)), 155524)
+    self:Bar("warmup", 34.4, CL.big_add, 155524)
+end
+
+function mod:UNIT_FACTION(_, unit)
+    local npcID = self:MobId(UnitGUID(unit))
+    local currentTime = GetTime()
+
+    if npcID == 75652 and (currentTime - lastMobActiveTime) >= checkInterval then
+        lastMobActiveTime = currentTime
+        mod:mobactive()
+    end
+end
+
+

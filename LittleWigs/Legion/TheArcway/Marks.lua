@@ -10,7 +10,8 @@ mod:RegisterEnableMob(
     105617, --эредарский вестник хаоса
     105952, --иссохший - магический призрак
     106059, --искаженная тень
-    98756   --Волшебная аномалия
+    98756,   --Волшебная аномалия
+	105915   --Ночнорожденный-возродитель
 )
 
 --------------------------------------------------------------------------------
@@ -31,6 +32,7 @@ if L then
 	L.custom_off_Mob3 = "Withered Manawraith"
 	L.custom_off_Mob4 = "Warp Shade"
 	L.custom_off_Mob5 = "Arcane Anomaly"
+	L.custom_off_Mob6 = "Nightborne Reclaimer"
 end
 --------------------------------------------------------------------------------
 -- Locals
@@ -51,6 +53,7 @@ function mod:GetOptions()
 		"custom_off_Mob3",
 		"custom_off_Mob4",
 		"custom_off_Mob5",
+		"custom_off_Mob6",
 	}, {
 		["custom_on_Allowmarks"] = "general",
 		["custom_off_Mob1"] = L.Choose,
@@ -59,7 +62,7 @@ end
 
 function mod:OnBossEnable()
 	self:RegisterTargetEvents("AutoMarks")
-	self:Death("MarkDeath", 113699, 105617, 105952, 106059, 98756)
+	self:Death("MarkDeath", 113699, 105617, 105952, 106059, 98756, 105915)
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", "ResetMobAddList")
 	self:RegisterEvent("PLAYER_REGEN_DISABLED")
 	self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
@@ -85,7 +88,7 @@ do
 		local mobID = self:MobId(guid)
 		if self:GetOption("custom_off_RequireLead") and not UnitIsGroupLeader("player") and ((UnitInParty("player") or UnitInRaid("player"))) then return end
 		if self:GetOption("custom_on_Allowmarks") and ((self:GetOption("custom_off_CombatMarking") and UnitAffectingCombat(unit)) or not self:GetOption("custom_off_CombatMarking")) then
-			if (self:GetOption("custom_off_Mob1") and mobID == 113699) or (self:GetOption("custom_off_Mob2") and mobID == 105617) or (self:GetOption("custom_off_Mob3") and mobID == 105952) or (self:GetOption("custom_off_Mob4") and mobID == 106059) or (self:GetOption("custom_off_Mob5") and mobID == 98756) then
+			if (self:GetOption("custom_off_Mob1") and mobID == 113699) or (self:GetOption("custom_off_Mob2") and mobID == 105617) or (self:GetOption("custom_off_Mob3") and mobID == 105952) or (self:GetOption("custom_off_Mob4") and mobID == 106059) or (self:GetOption("custom_off_Mob5") and mobID == 98756) or (self:GetOption("custom_off_Mob6") and mobID == 105915) then
 				for i = 1, 7 do
 					if not MobAddMarks[i] and not GetRaidTargetIndex(unit) then
 						SetRaidTarget(unit, i)

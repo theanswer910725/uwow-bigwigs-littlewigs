@@ -17,6 +17,7 @@ mod.engageId = 1756
 
 local colossalBlowCount = 1
 local verdantEruptionCount = 1
+local addsKilled = 0
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -25,6 +26,7 @@ local verdantEruptionCount = 1
 local L = mod:GetLocale()
 if L then
 	L.warmup_icon = "inv_enchant_shaperessence"
+	L.mobname = "Feral Lasher"
 end
 
 --------------------------------------------------------------------------------
@@ -35,6 +37,7 @@ local flourishingAncientMarker = mod:AddMarkerOption(true, "npc", 8, -10537, 8) 
 function mod:GetOptions()
 	return {
 		"warmup",
+		"stages",
 		-- Yalnu
 		169179, -- Colossal Blow
 		428823, -- Verdant Eruption
@@ -42,6 +45,7 @@ function mod:GetOptions()
 		169613, -- Genesis
 		-- Flourishing Ancient
 		169929, -- Lumbering Swipe
+		173536,
 	}, {
 		[169179] = self.displayName, -- Yalnu
 		[169929] = -10537, -- Flourishing Ancient
@@ -57,9 +61,12 @@ function mod:OnBossEnable()
 
 	-- Flourishing Ancient
 	self:Log("SPELL_CAST_START", "LumberingSwipe", 169929)
+	
+	self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 end
 
 function mod:OnEngage()
+	addsKilled = 0
 	colossalBlowCount = 1
 	verdantEruptionCount = 1
 	self:StopBar(CL.active) -- Warmup
@@ -75,10 +82,21 @@ end
 -- Warmup
 
 function mod:Warmup() -- called from trash module
-	self:Bar("warmup", 8.0, CL.active, L.warmup_icon)
+	self:Bar("warmup", 6.6, CL.active, L.warmup_icon)
 end
 
 -- Yalnu
+
+do
+	local prev = nil
+	function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, _, spellGUID, spellId)
+		if spellId == 173536 and spellGUID ~= prev then
+			prev = spellGUID
+			addsKilled = addsKilled + 1
+			self:Message("stages", "Neutral", addsKilled == 23 and "Long", CL.mob_killed:format(L.mobname, addsKilled, 23), false)
+		end
+	end
+end
 
 function mod:ColossalBlow(args)
 	self:StopBar(CL.count:format(args.spellName, colossalBlowCount))
@@ -125,6 +143,15 @@ function mod:Genesis(args)
 	self:PlaySound(args.spellId, "long")
 	self:CastBar(args.spellId, 14) -- 2s cast + 12s channel
 	self:CDBar(args.spellId, 54.6)
+	addsKilled = 0
+	self:ScheduleTimer("remainedmobs", 14)
+end
+
+
+function mod:remainedmobs()
+	if addsKilled < 23 then
+		self:Message("stages", "red", "Long", CL.mob_killed:format(L.mobname, addsKilled, 23), false)
+	end
 end
 
 -- Flourishing Ancient

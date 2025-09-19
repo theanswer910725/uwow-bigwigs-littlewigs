@@ -77,10 +77,10 @@ do
 			local power = UnitPower(unit) / UnitPowerMax(unit) * 100
 			local n = self:UnitName(unit)
 			local t = GetTime()
-			if power > 90 and power < 100 and t-prev > 0.5 and (self:Tank() or self:Heal()) then
+			if power > 90 and power < 100 and t-prev > 0.5 and (self:Tank() or self:Healer()) then
 				prev = t
 				self:Message(198245, "Important", "Alarm", CL.other:format(n, CL.percent:format(power, CL.incoming:format(self:SpellName(198245)))))
-			elseif power == 100 and t-prev > 0.5 and (self:Tank() or self:Heal()) then
+			elseif power == 100 and t-prev > 0.5 and (self:Tank() or self:Healer()) then
 				prev = t
 				self:Message(198245, "Important", "Bam", CL.other:format(n, CL.percent:format(power, self:SpellName(198245))))
 		end

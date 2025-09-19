@@ -22,6 +22,16 @@ mod:RegisterEnableMob(
 	122423 -- Grand Shadow-Weaver
 )
 
+local mark = {
+  ["{rt1}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1:0|t",
+  ["{rt2}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_2:0|t",
+  ["{rt3}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_3:0|t",
+  ["{rt4}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_4:0|t",
+  ["{rt5}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_5:0|t",
+  ["{rt6}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_6:0|t",
+  ["{rt7}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7:0|t",
+  ["{rt8}"] = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8:0|t"
+}
 --------------------------------------------------------------------------------
 -- Localization
 --
@@ -36,10 +46,6 @@ end
 --------------------------------------------------------------------------------
 -- Locals
 --
-
-local RuinousStrike = 0
-local WildSummon = 0
-local StygianBlast = 0
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -191,7 +197,20 @@ do
 		end
 	end
 	function mod:EntropicMist(args)
-		self:GetUnitTarget(printTarget, 0.4, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
+		
+		local unit = self:GetUnitIdByGUID(args.sourceGUID)
+		local raidIndex = unit and GetRaidTargetIndex(unit)
+		if raidIndex and raidIndex > 0 then
+			self:CDBar(245522, 7.5, CL.other:format(self:SpellName(245522), mark["{rt" .. raidIndex .. "}"]), 245522)
+			return
+		end
+		for i = 1, 8 do
+			if self:BarTimeLeft(CL.count:format(self:SpellName(245522), i)) < 1 then
+				self:Bar(245522, 7.5, CL.count:format(self:SpellName(245522), i))
+				break
+			end
+		end		
 	end
 end
 
@@ -205,37 +224,55 @@ do
 		end
 	end
 	function mod:StygianBlast(args)
-	self:GetUnitTarget(printTarget, 0.4, args.sourceGUID)
-	if StygianBlast == 0 then
-		self:CDBar(args.spellId, 20)
-		StygianBlast = 1
-	elseif StygianBlast == 1 then
-		self:CastBar(args.spellId, 20)
-		StygianBlast = 0
-	end
+		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
+
+		local unit = self:GetUnitIdByGUID(args.sourceGUID)
+		local raidIndex = unit and GetRaidTargetIndex(unit)
+		if raidIndex and raidIndex > 0 then
+			self:CDBar(248133, 20, CL.other:format(self:SpellName(248133), mark["{rt" .. raidIndex .. "}"]), 248133)
+			return
+		end
+		for i = 1, 8 do
+			if self:BarTimeLeft(CL.count:format(self:SpellName(248133), i)) < 1 then
+				self:Bar(248133, 20, CL.count:format(self:SpellName(248133), i))
+				break
+			end
+		end	
 	end
 end
 
 function mod:WildSummon(args)
 	self:Message(args.spellId, "Attention", "Info", CL.casting:format(args.spellName))
-	if WildSummon == 0 then
-		self:CDBar(args.spellId, 23.5)
-		WildSummon = 1
-	elseif WildSummon == 1 then
-		self:CastBar(args.spellId, 23.5)
-		WildSummon = 0
-	end	
+	
+	local unit = self:GetUnitIdByGUID(args.sourceGUID)
+	local raidIndex = unit and GetRaidTargetIndex(unit)
+	if raidIndex and raidIndex > 0 then
+		self:CDBar(248304, 23.5, CL.other:format(self:SpellName(248304), mark["{rt" .. raidIndex .. "}"]), 248304)
+		return
+	end
+	for i = 1, 8 do
+        if self:BarTimeLeft(CL.count:format(self:SpellName(248304), i)) < 1 then
+            self:Bar(248304, 23.5, CL.count:format(self:SpellName(248304), i))
+            break
+        end
+    end
 end
 
 function mod:RuinousStrike(args)
 	self:Message(args.spellId, "Important", "Warning")
-	if RuinousStrike == 0 then
-		self:CDBar(args.spellId, 15.5)
-		RuinousStrike = 1
-	elseif RuinousStrike == 1 then
-		self:CastBar(args.spellId, 15.5)
-		RuinousStrike = 0
+	
+	local unit = self:GetUnitIdByGUID(args.sourceGUID)
+	local raidIndex = unit and GetRaidTargetIndex(unit)
+	if raidIndex and raidIndex > 0 then
+		self:CDBar(245706, 15.5, CL.other:format(self:SpellName(245706), mark["{rt" .. raidIndex .. "}"]), 245706)
+		return
 	end	
+	for i = 1, 8 do
+        if self:BarTimeLeft(CL.count:format(self:SpellName(245706), i)) < 1 then
+            self:Bar(245706, 15.5, CL.count:format(self:SpellName(245706), i))
+            break
+        end
+    end
 end
 
 function mod:RuinousStrikeApp(args)
@@ -259,7 +296,7 @@ do
 		end
 	end
 	function mod:NegatingBrand(args)
-		self:GetUnitTarget(printTarget, 0.4, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
 	end
 end
 

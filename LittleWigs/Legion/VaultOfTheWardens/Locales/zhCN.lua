@@ -9,7 +9,7 @@ if L then
 	L.warmup_text = "科达娜·邪歌激活"
 	L.warmup_trigger = "我拿到想要的东西了。但我要留下来了结你们……永除后患！"
 	L.warmup_trigger_2 = "你们掉进了我的陷阱。让我看看你们在黑暗中的本事吧。"
-	L.warmup_trigger_3 = "How utterly predictable! I knew that you would come."
+	L.warmup_trigger_3 = "果然不出我所料！我就知道你会来。"
 end
 
 L = BigWigs:NewBossLocale("Glazer", "zhCN")
@@ -20,7 +20,7 @@ end
 L = BigWigs:NewBossLocale("Tirathon Saltheril", "zhCN")
 if L then
 	L.warmup_trigger = "我为人民而战，为那些被放逐和唾弃的人而战。"
-	L.warmup_trigger2 = "I gave of my flesh, my soul; my people shun me as a freak."
+	L.warmup_trigger2 = "我献出了我的血肉，我的灵魂，我的族人却把我视为怪物。"
 end
 
 L = BigWigs:NewBossLocale("Vault of the Wardens Trash", "zhCN")
@@ -35,14 +35,14 @@ if L then
 	L.grimhorn = "奴役者格里霍恩"
 end
 
-L = BigWigs:NewBossLocale("=> AutoMarks <=         ", "zhCN")
+L = BigWigs:NewBossLocale("=> AutoMarks <=    ", "zhCN")
 if L then
 	L.custom_on_Allowmarks = "标记选定小怪"
 	L.custom_on_Allowmarks_desc = "用 {rt1}{rt2}{rt3}{rt4}{rt5}{rt6}{rt7} 标记小怪，你需要是助理或领袖"
 	L.custom_off_RequireLead = "仅由我（领袖）操作"
 	L.custom_off_CombatMarking  = "仅标记战斗中的小怪"
 
-	L.Choose = "Выберите, каких мобов отмечать"
+	L.Choose = "请选择需要标记的小怪"
 	
 	L.custom_off_Mob1 = "灌魔之怒"
 	L.custom_off_Mob2 = "魔誓寄生者"

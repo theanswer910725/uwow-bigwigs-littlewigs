@@ -101,7 +101,7 @@ do
 		self:Message(args.spellId, "Neutral", "Long", CL.over:format(args.spellName))
 		--self:PlaySound(args.spellId, "long")
 		-- cast at 0 energy, 39s energy loss + delay
-		self:Bar(args.spellId, 39.3)
+		self:Bar(args.spellId, 40)
 		self:CDBar(164357, 3.6) -- Parched Gasp
 	end
 
