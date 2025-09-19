@@ -80,7 +80,7 @@ do
 		self:TargetMessage(227592, name, "Urgent", self:Interrupter() and "Alarm")
 	end
 	function mod:Frostbite(args)
-		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 1, args.sourceGUID)
 	end
 end
 
@@ -109,7 +109,7 @@ do
 		end
 	end
 	function mod:InfernoBolt(args)
-		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 1, args.sourceGUID)
 	end
 end
 
@@ -118,7 +118,7 @@ do
 		self:TargetMessage(227628, name, "Attention", "none")
 	end
 	function mod:PiercingMissiles(args)
-		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 1, args.sourceGUID)
 	end
 end
 

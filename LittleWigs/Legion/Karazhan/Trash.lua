@@ -343,7 +343,7 @@ do
 			prev = t
 			self:Bar(args.spellId, 32)
 		end
-		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 0.4, args.sourceGUID)
 	end
 end
 
@@ -453,7 +453,7 @@ do
 		end
 	end
 	function mod:Flirt(args)
-		self:GetUnitTarget(printTarget, 0.1, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 0.4, args.sourceGUID)
 	end
 end
 
