@@ -1,6 +1,6 @@
 ## Interface: 70300
 
-## Title: |cffff0000Uwow:|r |cffff00ffLittleWigs|r |cffff0000[|r|cff00ff00Modded by|r |cFFA330C9Энелрила|r|cffff0000]|r
+## Title: |cffff0000Uwow:|r |cffff00ffLittleWigs|r |cffff0000[|r|cff00ff00Modded by|r |cFFA330C9Энелрила|r|cffff0000]|r |cffff0000[|r|cff00ff00zhCN汉化：|r |cFFA330C9@代码哥 @水银灯|r|cffff0000]|r
 ## Notes: Boss warnings for 5-man dungeons & scenarios.
 ## Notes-deDE: Boss warnings for 5-man dungeons & scenarios.
 ## Notes-esES: Boss warnings for 5-man dungeons & scenarios.
