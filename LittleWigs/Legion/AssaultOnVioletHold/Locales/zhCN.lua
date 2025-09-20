@@ -36,7 +36,7 @@ if L then
 	L.custom_on_autoLFG = "自动创建 集合石"
 	L.custom_on_autoLFG_desc = "当你将钥石链接到综合频道后，将根据该钥石信息自动开启并填写一个 集合石 活动。"
 
-	L.KarazhanEvent1 = "[LittleWigs] 本周为“锅碗瓢盆”
+	L.KarazhanEvent1 = "[LittleWigs] 本周为“锅碗瓢盆”"
 	L.KarazhanSequence1 = "|cffff00ff [LittleWigs]|r|cff00ff00 卡拉赞Boss顺序：锅碗瓢盆） -> 魔法坏女巫 -> 托尼|r"
 	L.KarazhanEvent2 = "[LittleWigs] 本周为“魔法坏女巫"
 	L.KarazhanSequence2 = "|cffff00ff [LittleWigs]|r|cff00ff00 卡拉赞Boss顺序：魔法坏女巫 -> 托尼 -> 锅碗瓢盆|r"
