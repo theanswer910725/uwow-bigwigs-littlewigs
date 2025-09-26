@@ -12,7 +12,7 @@ if L then
 	L.skjal = "斯卡加尔"
 end
 
-L = BigWigs:NewBossLocale("=> AutoMarks <=         ", "zhCN")
+L = BigWigs:NewBossLocale("=> AutoMarks <= ", "zhCN")
 if L then
 	L.custom_on_Allowmarks = "标记选定小怪"
 	L.custom_on_Allowmarks_desc = "用 {rt1}{rt2}{rt3}{rt4}{rt5}{rt6}{rt7} 标记小怪，你需要是助理或领袖"
