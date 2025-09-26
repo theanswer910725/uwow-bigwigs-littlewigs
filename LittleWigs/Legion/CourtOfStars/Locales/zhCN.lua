@@ -63,10 +63,10 @@ if L then
 
 	L.clueFound = "找到第%d/5条线索：|cffffffff%s|r"
 	L.spyFound = "间谍被%s找到了！"
-	L.spyNoticed = "Игрок %s кое-что замечает!"
-	L.spyNoticedChat = "[LittleWigs] Вижу шпиона !"
-	L.provenspy = "|cffff0000Это не шпион!|r |cff69ccf0Выберите следующую цель.|r"
-	
+	L.spyNoticed = "玩家%s注意到了一些东西！"
+	L.spyNoticedChat = "[LittleWigs] 发现间谍了！"
+	L.provenspy = "|cffff0000这不是间谍！|r |cff69ccf0请选择下一个目标。|r"
+
 	L.spyFoundChat = "间谍已找到，快来！"
 	L.spyFoundPattern = "喂喂，别急着下结论" -- Now now, let's not be hasty [player]. Why don't you follow me so we can talk about this in a more private setting...
 
@@ -179,10 +179,10 @@ if L then
 	L.custom_off_RequireLead = "仅由我（领袖）操作"
 	L.custom_off_CombatMarking  = "仅标记战斗中的小怪"
 	L.Choose = "请选择需要标记的小怪"
-	L.custom_off_Mob1 = "Бдительный часовой из сумеречной стражи"
-	L.custom_off_Mob2 = "Часовой из сумеречной стражи"
-	L.custom_off_Mob3 = "Манапард"
-	L.custom_off_Mob4 = "Голем-страж"
-	L.custom_off_Mob5 = "Порабощенная скверной карательница"
-	L.custom_off_Mob6 = "Бдительный инквизитор"
+	L.custom_off_Mob1 = "警惕的暮色卫队卫兵"
+	L.custom_off_Mob2 = "暮色卫队哨兵"
+	L.custom_off_Mob3 = "魔刃豹"
+	L.custom_off_Mob4 = "构造体卫兵"
+	L.custom_off_Mob5 = "邪缚执行者"
+	L.custom_off_Mob6 = "警觉的审判者"
 end
