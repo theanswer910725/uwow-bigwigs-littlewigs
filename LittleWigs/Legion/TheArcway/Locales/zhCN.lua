@@ -31,5 +31,5 @@ if L then
 	L.custom_off_Mob3 = "枯法法力怨灵"
 	L.custom_off_Mob4 = "迁跃之影"
 	L.custom_off_Mob5 = "奥术畸体"
-
+	L.custom_off_Mob6 = "夜之子复国者"
 end
