@@ -8,7 +8,7 @@ if L then
 	L.Hound = "军团猎犬"
 	L.Mistress = "暗影女妖"
 	L.Gerenth = "邪恶的格伦斯"
-	L.ManaSaber = "Манапард"
+	L.ManaSaber = "魔刃豹"
 	L.Jazshariu = "加兹沙尤"
 	L.Imacutya = "依玛库塔"
 	L.Baalgar = "警惕的巴尔戈"
